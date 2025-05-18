@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom cyberpunk Bahian theme colors
+				'cyber-blue': '#0EA5E9',
+				'cyber-purple': '#8B5CF6',
+				'cyber-teal': '#14B8A6',
+				'cyber-orange': '#F97316',
+				'cyber-pink': '#EC4899',
+				'parchment': '#F2E8CF',
+				'dark-parchment': '#D3BF8D',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,12 +93,36 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 10px rgba(14, 165, 233, 0.7), 0 0 20px rgba(14, 165, 233, 0.4)' 
+					},
+					'50%': { 
+						boxShadow: '0 0 15px rgba(14, 165, 233, 0.9), 0 0 30px rgba(14, 165, 233, 0.6)' 
+					},
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'text-flicker': {
+					'0%, 100%': { opacity: '1' },
+					'33%': { opacity: '0.9' },
+					'66%': { opacity: '0.94' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'text-flicker': 'text-flicker 2s linear infinite',
+			},
+			backgroundImage: {
+				'cyber-gradient': 'linear-gradient(to right, #0EA5E9, #8B5CF6)',
+				'parchment-texture': 'url("/parchment-bg.png")',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
