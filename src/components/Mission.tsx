@@ -3,14 +3,32 @@ import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { HelpCircle, ArrowLeft } from 'lucide-react';
+import { HelpCircle, ArrowLeft, Home, Loader2 } from 'lucide-react';
+import { useApiKey } from '@/components/ApiKeySetup';
+import { evaluateMissionResponse } from '@/utils/openaiService';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const Mission: React.FC = () => {
-  const { gameState, submitMissionResponse, showHelpScreen } = useGame();
+  const { gameState, submitMissionResponse, showHelpScreen, setCurrentScreen } = useGame();
   const { currentMission, missionResponses } = gameState;
   const [response, setResponse] = useState(
     currentMission ? missionResponses[currentMission.id] || '' : ''
   );
+  const [evaluation, setEvaluation] = useState<string | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const { apiKey, hasApiKey } = useApiKey();
+  const { toast } = useToast();
 
   if (!currentMission) {
     return <div className="text-center py-16">Carregando missão...</div>;
@@ -20,17 +38,84 @@ const Mission: React.FC = () => {
     submitMissionResponse(currentMission.id, response);
   };
 
+  const handleEvaluate = async () => {
+    if (!response.trim()) {
+      toast({
+        title: "Resposta vazia",
+        description: "Por favor, escreva uma proposta de intervenção antes de continuar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!hasApiKey) {
+      toast({
+        title: "Chave API não configurada",
+        description: "Configure sua chave API OpenAI para usar a avaliação automática.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsEvaluating(true);
+    setEvaluation(null);
+
+    try {
+      const result = await evaluateMissionResponse(
+        `${currentMission.description}\n\n${currentMission.instruction}`,
+        response,
+        apiKey
+      );
+
+      if (result.success) {
+        setEvaluation(result.evaluation || "");
+      } else {
+        toast({
+          title: "Erro na avaliação",
+          description: result.error || "Ocorreu um erro ao avaliar sua resposta.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao avaliar resposta:", error);
+      toast({
+        title: "Erro na avaliação",
+        description: "Ocorreu um erro ao conectar com a API OpenAI.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   return (
     <div className="py-8">
       <div className="flex items-center gap-4 mb-8">
-        <Button 
-          variant="outline" 
-          size="icon"
-          className="rounded-full"
-          onClick={() => window.history.back()}
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="icon"
+              className="rounded-full"
+            >
+              <Home className="h-6 w-6" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Voltar para a tela inicial?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Se você sair agora, qualquer resposta não salva será perdida.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => setCurrentScreen('missionMap')}>
+                Voltar para o Mapa
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <div>
           <h2 className="text-sm text-cyber-orange font-medium">{currentMission.zone}</h2>
           <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
@@ -71,7 +156,31 @@ const Mission: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-center">
+      {evaluation && (
+        <div className="card-cyber p-6 mb-8 bg-cyber-purple/10">
+          <h3 className="font-bold mb-2 text-cyber-purple">Avaliação da IA:</h3>
+          <div className="whitespace-pre-wrap">{evaluation}</div>
+        </div>
+      )}
+
+      <div className="flex justify-center gap-4">
+        {hasApiKey && (
+          <Button 
+            className="bg-cyber-purple hover:bg-cyber-purple/80"
+            onClick={handleEvaluate}
+            disabled={isEvaluating || !response.trim()}
+          >
+            {isEvaluating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Avaliando...
+              </>
+            ) : (
+              'Avaliar com IA'
+            )}
+          </Button>
+        )}
+        
         <Button 
           className="btn-cyber"
           onClick={handleSubmit}

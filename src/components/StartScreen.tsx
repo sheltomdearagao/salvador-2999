@@ -3,14 +3,29 @@ import React from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { characters } from '@/data/gameData';
+import { Home } from 'lucide-react';
+import ApiKeySetup from '@/components/ApiKeySetup';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const StartScreen: React.FC = () => {
-  const { gameState, selectCharacter } = useGame();
+  const { gameState, selectCharacter, startGame } = useGame();
   
   const handleStartClick = () => {
-    selectCharacter(gameState.selectedCharacter || null);
-    if (gameState.selectedCharacter) return;
-    document.getElementById('character-selection')?.scrollIntoView({ behavior: 'smooth' });
+    if (gameState.selectedCharacter) {
+      startGame();
+    } else {
+      document.getElementById('character-selection')?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -38,9 +53,11 @@ const StartScreen: React.FC = () => {
         </p>
       </div>
       
+      <ApiKeySetup />
+      
       <Button 
         className="btn-cyber text-xl" 
-        onClick={() => handleStartClick()}
+        onClick={handleStartClick}
       >
         {gameState.selectedCharacter 
           ? "Começar a Jornada" 

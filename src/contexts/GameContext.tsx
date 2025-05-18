@@ -59,6 +59,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  const setCurrentScreen = (screen: GameScreen) => {
+    setGameState((prev) => ({
+      ...prev,
+      currentScreen: screen,
+      currentMission: screen !== "mission" ? null : prev.currentMission
+    }));
+  };
+
   const submitMissionResponse = (missionId: string, response: string) => {
     if (!response.trim()) {
       toast({
@@ -143,7 +151,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         submitMissionResponse,
         showHelpScreen,
         hideHelpScreen,
-        resetGame
+        resetGame,
+        setCurrentScreen
       }}
     >
       {children}
