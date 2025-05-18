@@ -2,6 +2,7 @@
 import React from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
+import { characters } from '@/data/gameData';
 
 const StartScreen: React.FC = () => {
   const { gameState, selectCharacter } = useGame();
@@ -57,7 +58,6 @@ const StartScreen: React.FC = () => {
 
 const CharacterSelectionSection: React.FC = () => {
   const { gameState, selectCharacter } = useGame();
-  const { characters } = require('@/data/gameData');
   
   return (
     <div className="mt-12">
