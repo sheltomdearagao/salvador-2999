@@ -39,4 +39,5 @@ export type GameContextType = {
   showHelpScreen: () => void;
   hideHelpScreen: () => void;
   resetGame: () => void;
+  setCurrentScreen: (screen: GameScreen) => void;
 };
