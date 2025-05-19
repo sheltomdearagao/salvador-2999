@@ -15,6 +15,7 @@ export type Mission = {
   zone: string;
   description: string;
   instruction: string;
+  context?: string; // Contexto adicional detalhado sobre a missão
   imagePath?: string;
   status: MissionStatus;
 };
@@ -27,7 +28,9 @@ export type GameState = {
   missions: Mission[];
   currentMission: Mission | null;
   missionResponses: Record<string, string>;
+  missionScores: Record<string, number>; // Pontuação por missão
   completedMissions: number;
+  totalScore: number; // Pontuação total acumulada
 };
 
 export type GameContextType = {
@@ -35,7 +38,7 @@ export type GameContextType = {
   selectCharacter: (character: Character) => void;
   startGame: () => void;
   selectMission: (mission: Mission) => void;
-  submitMissionResponse: (missionId: string, response: string) => void;
+  submitMissionResponse: (missionId: string, response: string, score?: number) => void;
   showHelpScreen: () => void;
   hideHelpScreen: () => void;
   resetGame: () => void;

@@ -10,7 +10,9 @@ const initialGameState: GameState = {
   missions: initialMissions,
   currentMission: null,
   missionResponses: {},
-  completedMissions: 0
+  missionScores: {}, // Registro de pontuações por missão
+  completedMissions: 0,
+  totalScore: 0 // Pontuação total acumulada
 };
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -67,7 +69,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  const submitMissionResponse = (missionId: string, response: string) => {
+  const submitMissionResponse = (missionId: string, response: string, score?: number) => {
     if (!response.trim()) {
       toast({
         title: "Resposta vazia",
@@ -77,13 +79,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    // Update mission status
+    // Atualizar status das missões
     const updatedMissions = gameState.missions.map((mission) => {
       if (mission.id === missionId) {
         return { ...mission, status: "completed" as const };
       }
       
-      // Unlock the next mission if this is the current one being completed
+      // Desbloquear a próxima missão se esta for a atual sendo completada
       if (mission.status === "locked" && gameState.currentMission?.id === missionId) {
         const currentIndex = gameState.missions.findIndex(m => m.id === missionId);
         const isNextMission = gameState.missions.indexOf(mission) === currentIndex + 1;
@@ -98,6 +100,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const newCompletedMissions = gameState.completedMissions + 1;
     
+    // Calcular e armazenar pontuações
+    const missionScore = score || 0;
+    const updatedMissionScores = {
+      ...gameState.missionScores,
+      [missionId]: missionScore
+    };
+    
+    const newTotalScore = Object.values(updatedMissionScores).reduce((sum, score) => sum + score, 0);
+    
     setGameState((prev) => ({
       ...prev,
       missions: updatedMissions,
@@ -105,14 +116,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...prev.missionResponses,
         [missionId]: response
       },
+      missionScores: updatedMissionScores,
+      totalScore: newTotalScore,
       currentMission: null,
       currentScreen: newCompletedMissions >= 6 ? "end" : "missionMap",
       completedMissions: newCompletedMissions
     }));
 
+    const scoreMessage = score ? ` (Pontuação: ${score}/10)` : '';
     toast({
       title: "Proposta registrada",
-      description: "Sua intervenção foi registrada com sucesso!",
+      description: `Sua intervenção foi registrada com sucesso!${scoreMessage}`,
       variant: "default"
     });
   };

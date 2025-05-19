@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { HelpCircle, ArrowLeft, Home, Loader2 } from 'lucide-react';
-import { useApiKey } from '@/components/ApiKeySetup';
+import { HelpCircle, ArrowLeft, Home, Loader2, AlertTriangle } from 'lucide-react';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -19,6 +18,9 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
+const MINIMUM_SCORE = 8; // Nota mínima para passar (equivalente a 4+ elementos)
+const MINIMUM_ELEMENTS = 4; // Número mínimo de elementos válidos necessários
+
 const Mission: React.FC = () => {
   const { gameState, submitMissionResponse, showHelpScreen, setCurrentScreen } = useGame();
   const { currentMission, missionResponses } = gameState;
@@ -27,7 +29,9 @@ const Mission: React.FC = () => {
   );
   const [evaluation, setEvaluation] = useState<string | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const { apiKey, hasApiKey } = useApiKey();
+  const [score, setScore] = useState<number | undefined>(undefined);
+  const [elementsCount, setElementsCount] = useState<number | undefined>(undefined);
+  const [isEvaluated, setIsEvaluated] = useState(false);
   const { toast } = useToast();
 
   if (!currentMission) {
@@ -35,7 +39,25 @@ const Mission: React.FC = () => {
   }
 
   const handleSubmit = () => {
-    submitMissionResponse(currentMission.id, response);
+    if (!isEvaluated) {
+      toast({
+        title: "Avaliação necessária",
+        description: "Você precisa avaliar sua proposta com a IA antes de continuar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if ((score && score < MINIMUM_SCORE) || (elementsCount && elementsCount < MINIMUM_ELEMENTS)) {
+      toast({
+        title: "Proposta insuficiente",
+        description: `Sua proposta precisa conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    submitMissionResponse(currentMission.id, response, score);
   };
 
   const handleEvaluate = async () => {
@@ -48,27 +70,33 @@ const Mission: React.FC = () => {
       return;
     }
 
-    if (!hasApiKey) {
-      toast({
-        title: "Chave API não configurada",
-        description: "Configure sua chave API OpenAI para usar a avaliação automática.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsEvaluating(true);
     setEvaluation(null);
+    setScore(undefined);
+    setElementsCount(undefined);
+    setIsEvaluated(false);
 
     try {
       const result = await evaluateMissionResponse(
         `${currentMission.description}\n\n${currentMission.instruction}`,
-        response,
-        apiKey
+        response
       );
 
       if (result.success) {
         setEvaluation(result.evaluation || "");
+        setScore(result.score);
+        setElementsCount(result.elementsCount);
+        setIsEvaluated(true);
+        
+        // Notificar o usuário se sua proposta não atende aos requisitos mínimos
+        if ((result.score && result.score < MINIMUM_SCORE) || 
+            (result.elementsCount && result.elementsCount < MINIMUM_ELEMENTS)) {
+          toast({
+            title: "Proposta precisa de melhorias",
+            description: `Sua proposta deve conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
+            variant: "warning"
+          });
+        }
       } else {
         toast({
           title: "Erro na avaliação",
@@ -137,6 +165,13 @@ const Mission: React.FC = () => {
       <div className="card-cyber p-6 mb-8">
         <p className="text-lg mb-6">{currentMission.description}</p>
         
+        {currentMission.context && (
+          <div className="bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-cyber-purple">Contexto Adicional:</h3>
+            <p>{currentMission.context}</p>
+          </div>
+        )}
+        
         <div className="bg-cyber-blue/10 border border-cyber-blue/30 rounded-lg p-4">
           <h3 className="font-bold mb-2 text-cyber-blue">Instrução da Missão:</h3>
           <p>{currentMission.instruction}</p>
@@ -160,31 +195,58 @@ const Mission: React.FC = () => {
         <div className="card-cyber p-6 mb-8 bg-cyber-purple/10">
           <h3 className="font-bold mb-2 text-cyber-purple">Avaliação da IA:</h3>
           <div className="whitespace-pre-wrap">{evaluation}</div>
+          
+          {elementsCount !== undefined && (
+            <div className="mt-4 flex items-center">
+              <span className="font-bold mr-2">Elementos válidos:</span> 
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`w-6 h-6 rounded-full flex items-center justify-center 
+                      ${i < elementsCount ? 'bg-cyber-purple text-white' : 'bg-gray-200 text-gray-500'}`}
+                  >
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {score !== undefined && (
+            <div className="mt-2">
+              <span className="font-bold">Pontuação:</span> {score}/10
+              {score < MINIMUM_SCORE && (
+                <div className="mt-2 flex items-center text-amber-600">
+                  <AlertTriangle className="mr-2 h-4 w-4" />
+                  <span>Pontuação mínima necessária: {MINIMUM_SCORE}/10</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
       <div className="flex justify-center gap-4">
-        {hasApiKey && (
-          <Button 
-            className="bg-cyber-purple hover:bg-cyber-purple/80"
-            onClick={handleEvaluate}
-            disabled={isEvaluating || !response.trim()}
-          >
-            {isEvaluating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Avaliando...
-              </>
-            ) : (
-              'Avaliar com IA'
-            )}
-          </Button>
-        )}
+        <Button 
+          className="bg-cyber-purple hover:bg-cyber-purple/80"
+          onClick={handleEvaluate}
+          disabled={isEvaluating || !response.trim()}
+        >
+          {isEvaluating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Avaliando...
+            </>
+          ) : (
+            'Avaliar com IA'
+          )}
+        </Button>
         
         <Button 
           className="btn-cyber"
           onClick={handleSubmit}
-          disabled={!response.trim()}
+          disabled={!isEvaluated || !response.trim() || (score !== undefined && score < MINIMUM_SCORE) || (elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS)}
         >
           Enviar proposta e continuar
         </Button>

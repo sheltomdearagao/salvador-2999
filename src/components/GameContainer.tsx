@@ -13,8 +13,8 @@ const GameContainer: React.FC = () => {
   const { currentScreen } = gameState;
 
   return (
-    <div className="game-container parchment-bg">
-      <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+    <div className="game-container steampunk-bg">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] pointer-events-none"></div>
       <div className="relative z-10">
         {currentScreen === 'start' && <StartScreen />}
         {currentScreen === 'characterSelection' && <CharacterSelection />}

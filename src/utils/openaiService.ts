@@ -4,41 +4,59 @@ interface OpenAIResponse {
   evaluation?: string;
   error?: string;
   score?: number;
+  elementsCount?: number; // Número de elementos válidos identificados
 }
+
+// Chave API fixa (ATENÇÃO: Esta chave deve ser movida para um backend em produção)
+const OPENAI_API_KEY = "sua_chave_api_aqui"; // Substitua pela sua chave
 
 export const evaluateMissionResponse = async (
   missionPrompt: string,
   userResponse: string,
-  apiKey: string
 ): Promise<OpenAIResponse> => {
-  if (!apiKey) {
-    return {
-      success: false,
-      error: "Chave da API não encontrada."
-    };
-  }
-
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: "Você é um avaliador de respostas para um jogo educativo sobre intervenções sociais em Salvador. Avalie a resposta do jogador em uma escala de 0 a 10, considerando: criatividade, viabilidade, impacto social, e clareza. Forneça feedback construtivo e sugestões para melhorar. Responda em português do Brasil. Formato da resposta: uma avaliação de 2-3 parágrafos e uma nota final."
+            content: `Você é um avaliador especializado na Competência V da redação do ENEM, que avalia propostas de intervenção. 
+            
+            Uma proposta de intervenção COMPLETA deve apresentar 5 elementos: 
+            1. Ação (O quê?) - O que deve ser feito para solucionar ou mitigar o problema
+            2. Agente (Quem?) - Quem será o responsável por executar a ação proposta
+            3. Modo/Meio (Como?) - De que maneira ou através de qual recurso a ação será realizada
+            4. Efeito (Para quê?) - Finalidade ou resultado esperado da ação proposta
+            5. Detalhamento - Informação adicional sobre algum dos elementos anteriores
+            
+            Analise a resposta do jogador e identifique quantos desses elementos estão presentes corretamente. 
+            Avalie a proposta de intervenção em uma escala de 0 a 10. 
+            Uma proposta com 4 ou 5 elementos deve receber nota mínima 8. 
+            Uma proposta com 3 elementos deve receber nota entre 5 e 7.
+            Uma proposta com 1 ou 2 elementos deve receber nota abaixo de 5.
+            
+            Forneça feedback construtivo e sugestões de melhoria. Identifique explicitamente quais elementos estão presentes e quais estão ausentes.
+            
+            Estrutura da avaliação:
+            1. Análise dos elementos presentes (listar cada um encontrado)
+            2. Elementos ausentes ou que precisam de melhorias
+            3. Nota final (formato "Nota: X/10")
+            4. Quantidade de elementos válidos (formato "Elementos: Y/5")
+            `
           },
           {
             role: "user",
-            content: `Missão: ${missionPrompt}\n\nResposta do jogador: ${userResponse}\n\nAvalie esta resposta.`
+            content: `Missão: ${missionPrompt}\n\nResposta do jogador: ${userResponse}\n\nAvalie esta proposta de intervenção conforme os critérios da Competência V.`
           }
         ],
-        temperature: 0.7,
-        max_tokens: 500,
+        temperature: 0.5,
+        max_tokens: 800,
       }),
     });
 
@@ -53,14 +71,19 @@ export const evaluateMissionResponse = async (
 
     const evaluation = data.choices[0].message.content;
     
-    // Extrair pontuação (se presente no formato "Nota: X/10")
+    // Extrair pontuação (formato "Nota: X/10")
     const scoreMatch = evaluation.match(/Nota:?\s*(\d+(?:\.\d+)?)\/10/i);
     const score = scoreMatch ? parseFloat(scoreMatch[1]) : undefined;
+    
+    // Extrair contagem de elementos (formato "Elementos: Y/5")
+    const elementsMatch = evaluation.match(/Elementos:?\s*(\d+)\/5/i);
+    const elementsCount = elementsMatch ? parseInt(elementsMatch[1]) : undefined;
 
     return {
       success: true,
       evaluation,
-      score
+      score,
+      elementsCount
     };
   } catch (error) {
     console.error("Erro ao avaliar resposta:", error);
