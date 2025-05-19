@@ -94,7 +94,7 @@ const Mission: React.FC = () => {
           toast({
             title: "Proposta precisa de melhorias",
             description: `Sua proposta deve conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
-            variant: "warning"
+            variant: "default"
           });
         }
       } else {
