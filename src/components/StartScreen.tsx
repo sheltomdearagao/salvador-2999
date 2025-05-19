@@ -4,7 +4,6 @@ import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { characters } from '@/data/gameData';
 import { Home } from 'lucide-react';
-import ApiKeySetup from '@/components/ApiKeySetup';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,8 +51,6 @@ const StartScreen: React.FC = () => {
           Você é parte de uma equipe que tentará salvar o que restou. Mas sua arma será a escrita. Seu poder: argumentar.
         </p>
       </div>
-      
-      <ApiKeySetup />
       
       <Button 
         className="btn-cyber text-xl" 
