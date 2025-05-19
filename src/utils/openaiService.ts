@@ -8,7 +8,7 @@ interface OpenAIResponse {
 }
 
 // Chave API fixa (ATENÇÃO: Esta chave deve ser movida para um backend em produção)
-const OPENAI_API_KEY = "sua_chave_api_aqui"; // Substitua por sua chave API real
+const OPENAI_API_KEY = "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"; // Substitua por sua chave API real
 
 export const evaluateMissionResponse = async (
   missionPrompt: string,
