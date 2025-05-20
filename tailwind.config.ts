@@ -111,7 +111,7 @@ export default {
 					'50%': { transform: 'translateY(-10px)' },
 				},
 				'text-flicker': {
-					'0%, 100%': { opacity: '1' },
+					'0%, 50%, 100%': { opacity: '1' },
 					'33%': { opacity: '0.9' },
 					'66%': { opacity: '0.94' },
 				}
@@ -122,6 +122,7 @@ export default {
 				'pulse-glow': 'pulse-glow 6s infinite',
 				'float': 'float 6s ease-in-out infinite',
 				'text-flicker': 'text-flicker 4s linear infinite',
+				'function': ease-in-out
 			},
 			backgroundImage: {
 				'cyber-gradient': 'linear-gradient(to right, #0EA5E9, #8B5CF6)',
