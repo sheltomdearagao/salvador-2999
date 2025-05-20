@@ -109,7 +109,7 @@
   }
   
   .btn-cyber {
-    @apply relative py-3 px-6 bg-cyber-blue hover:bg-cyber-purple text-white rounded-md font-bold uppercase tracking-wider transition-all duration-300 animate-pulse-glow;
+    @apply relative py-3 px-6 bg-cyber-blue hover:bg-cyber-purple text-white rounded-md font-bold uppercase tracking-wider transition-all duration-1300 animate-pulse-glow;
   }
   
   .card-cyber {
