@@ -117,11 +117,11 @@ export default {
 				}
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-glow': 'pulse-glow 2s infinite',
+				'accordion-down': 'accordion-down 1.2s ease-out',
+				'accordion-up': 'accordion-up 1.2s ease-out',
+				'pulse-glow': 'pulse-glow 6s infinite',
 				'float': 'float 6s ease-in-out infinite',
-				'text-flicker': 'text-flicker 2s linear infinite',
+				'text-flicker': 'text-flicker 4s linear infinite',
 			},
 			backgroundImage: {
 				'cyber-gradient': 'linear-gradient(to right, #0EA5E9, #8B5CF6)',
