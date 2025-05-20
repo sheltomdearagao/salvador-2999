@@ -37,11 +37,15 @@ const Mission: React.FC = () => {
     return <div className="text-center py-16">Carregando missão...</div>;
   }
 
+  const handleBack = () => {
+    setCurrentScreen('missionMap');
+  };
+
   const handleSubmit = () => {
     if (!isEvaluated) {
       toast({
         title: "Avaliação necessária",
-        description: "Você precisa avaliar sua proposta com a IA antes de continuar.",
+        description: "Você precisa avaliar sua proposta com o mestre antes de continuar.",
         variant: "destructive"
       });
       return;
@@ -118,31 +122,14 @@ const Mission: React.FC = () => {
   return (
     <div className="py-8">
       <div className="flex items-center gap-4 mb-8">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="icon"
-              className="rounded-full"
-            >
-              <Home className="h-6 w-6" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Voltar para a tela inicial?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Se você sair agora, qualquer resposta não salva será perdida.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={() => setCurrentScreen('missionMap')}>
-                Voltar para o Mapa
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Button 
+          variant="outline" 
+          size="icon"
+          className="rounded-full"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
         <div>
           <h2 className="text-sm text-cyber-orange font-medium">{currentMission.zone}</h2>
           <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
@@ -192,7 +179,7 @@ const Mission: React.FC = () => {
 
       {evaluation && (
         <div className="card-cyber p-6 mb-8 bg-cyber-purple/10">
-          <h3 className="font-bold mb-2 text-cyber-purple">Avaliação da IA:</h3>
+          <h3 className="font-bold mb-2 text-cyber-purple">Avaliação do Mestre:</h3>
           <div className="whitespace-pre-wrap">{evaluation}</div>
           
           {elementsCount !== undefined && (
@@ -235,10 +222,10 @@ const Mission: React.FC = () => {
           {isEvaluating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Avaliando...
+              Consultando o mestre...
             </>
           ) : (
-            'Avaliar com IA'
+            'Consultar o mestre'
           )}
         </Button>
         

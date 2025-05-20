@@ -40,7 +40,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setGameState((prev) => ({
       ...prev,
-      currentScreen: "missionMap"
+      currentScreen: "adventureStart" // Mudado para a nova tela
     }));
   };
 

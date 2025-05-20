@@ -1,24 +1,39 @@
-
 import React from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, ArrowLeft } from 'lucide-react';
 
 const MissionMap: React.FC = () => {
-  const { gameState, selectMission, showHelpScreen } = useGame();
+  const { gameState, selectMission, showHelpScreen, setCurrentScreen } = useGame();
   const { missions, selectedCharacter } = gameState;
+
+  const handleBack = () => {
+    setCurrentScreen('adventureStart');
+  };
 
   return (
     <div className="py-8">
       <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 cyber-heading">
-            Mapa de Salvador 2999
-          </h1>
-          <p className="text-lg">
-            Selecione uma zona para iniciar sua missão, {selectedCharacter?.name}
-          </p>
+        <div className="flex items-center">
+          <Button 
+            variant="outline" 
+            size="icon"
+            className="rounded-full mr-4"
+            onClick={handleBack}
+          >
+            <ArrowLeft className="h-6 w-6" />
+          </Button>
+          
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 cyber-heading">
+              Mapa de Salvador 2999
+            </h1>
+            <p className="text-lg">
+              Selecione uma zona para iniciar sua missão, {selectedCharacter?.name}
+            </p>
+          </div>
         </div>
+        
         <Button 
           variant="outline"
           size="icon"

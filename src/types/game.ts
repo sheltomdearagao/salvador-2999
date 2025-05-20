@@ -20,7 +20,7 @@ export type Mission = {
   status: MissionStatus;
 };
 
-export type GameScreen = 'start' | 'characterSelection' | 'missionMap' | 'mission' | 'help' | 'end';
+export type GameScreen = 'start' | 'characterSelection' | 'adventureStart' | 'missionMap' | 'mission' | 'help' | 'end';
 
 export type GameState = {
   currentScreen: GameScreen;

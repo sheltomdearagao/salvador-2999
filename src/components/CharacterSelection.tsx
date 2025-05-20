@@ -3,13 +3,31 @@ import React from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { characters } from '@/data/gameData';
+import { ArrowLeft } from 'lucide-react';
 
 const CharacterSelection: React.FC = () => {
-  const { gameState, selectCharacter, startGame } = useGame();
+  const { gameState, selectCharacter, startGame, setCurrentScreen } = useGame();
+  
+  const handleBack = () => {
+    setCurrentScreen('start');
+  };
   
   return (
     <div className="py-8">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center cyber-heading">Escolha seu Personagem</h1>
+      <div className="flex items-center mb-8">
+        <Button 
+          variant="outline" 
+          size="icon"
+          className="rounded-full mr-4"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
+        
+        <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
+          Escolha seu Personagem
+        </h1>
+      </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {characters.map((character) => (
@@ -22,11 +40,11 @@ const CharacterSelection: React.FC = () => {
             }`}
             onClick={() => selectCharacter(character)}
           >
-            <div className="relative pb-[133%]">
+            <div className="relative pb-[100%] overflow-hidden">
               <img
                 src={character.imagePath}
                 alt={character.name}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-center"
               />
             </div>
             <div className="p-4 bg-parchment">
