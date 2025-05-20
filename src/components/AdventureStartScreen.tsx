@@ -36,9 +36,9 @@ const AdventureStartScreen: React.FC = () => {
         <h1 className="text-3xl md:text-5xl font-bold cyber-heading mb-6">
           A Jornada Começa
         </h1>
-        <p className="text-xl max-w-2xl mx-auto">
-          Salvador 2999 aguarda sua intervenção. Como {selectedCharacter.name}, 
-          suas decisões podem mudar o destino da última cidade.
+        <p className="text-xl max-w-2xl mx-auto" style="color: white;">
+                  {selectedCharacter.name}, em 2999, Salvador aguarda pela sua intervenção. 
+          Suas decisões podem mudar o destino da última cidade... ou destruí-la para sempre!
         </p>
       </div>
 
@@ -65,7 +65,7 @@ const AdventureStartScreen: React.FC = () => {
           </div>
           
           <p className="italic text-cyber-purple">
-            "Seis decisões moldarão o fim... ou o início."
+            "Seis decisões moldarão o início de uma nova era... ou o fim de todas."
           </p>
         </div>
       </div>
