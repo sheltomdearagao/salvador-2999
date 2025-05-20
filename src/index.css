@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto+Slab:wght@300;400;500;700&display=swap');
 
 @tailwind base;
@@ -117,15 +118,15 @@
   }
 
   .character-card {
-    @apply relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300 hover:scale-105;
+    @apply relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300;
   }
   
   .character-card-active {
-    @apply border-cyber-orange animate-pulse-glow;
+    @apply border-cyber-orange animate-pulse-glow shadow-lg;
   }
   
   .character-card-inactive {
-    @apply border-transparent opacity-70;
+    @apply border-transparent;
   }
   
   .mission-card {
@@ -137,15 +138,30 @@
   }
   
   .mission-available {
-    @apply border-cyber-blue cursor-pointer hover:scale-105 animate-pulse-glow;
+    @apply border-cyber-blue cursor-pointer hover:scale-105 hover:shadow-lg animate-pulse-glow;
   }
   
   .mission-completed {
-    @apply border-cyber-purple;
+    @apply border-cyber-purple hover:scale-105 hover:shadow-lg cursor-pointer;
   }
   
   .cyber-heading {
     @apply font-orbitron font-bold text-transparent bg-clip-text bg-cyber-gradient animate-text-flicker;
+  }
+
+  /* Melhorias para o enquadramento de imagens */
+  .character-portrait img {
+    @apply object-cover object-center;
+  }
+
+  /* Adicionando novas animações */
+  @keyframes float-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .animate-float-subtle {
+    animation: float-subtle 3s ease-in-out infinite;
   }
 
   .parchment-bg {
@@ -158,27 +174,5 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-  }
-
-  .screen-transition-enter {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  
-  .screen-transition-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 300ms, transform 300ms;
-  }
-  
-  .screen-transition-exit {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  .screen-transition-exit-active {
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 300ms, transform 300ms;
   }
 }

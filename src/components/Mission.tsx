@@ -1,21 +1,14 @@
+
 import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { HelpCircle, ArrowLeft, Home, Loader2, AlertTriangle } from 'lucide-react';
+import { HelpCircle, ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import MissionHeader from './mission/MissionHeader';
+import MissionContent from './mission/MissionContent';
+import MissionEvaluation from './mission/MissionEvaluation';
 
 const MINIMUM_SCORE = 8; // Nota mínima para passar (equivalente a 4+ elementos)
 const MINIMUM_ELEMENTS = 4; // Número mínimo de elementos válidos necessários
@@ -121,48 +114,15 @@ const Mission: React.FC = () => {
 
   return (
     <div className="py-8">
-      <div className="flex items-center gap-4 mb-8">
-        <Button 
-          variant="outline" 
-          size="icon"
-          className="rounded-full"
-          onClick={handleBack}
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-        <div>
-          <h2 className="text-sm text-cyber-orange font-medium">{currentMission.zone}</h2>
-          <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
-            {currentMission.title}
-          </h1>
-        </div>
-        <div className="ml-auto">
-          <Button 
-            variant="outline"
-            size="icon"
-            className="rounded-full"
-            onClick={showHelpScreen}
-          >
-            <HelpCircle className="h-6 w-6" />
-          </Button>
-        </div>
-      </div>
+      <MissionHeader 
+        mission={currentMission} 
+        onBack={handleBack} 
+        onHelp={showHelpScreen} 
+      />
 
-      <div className="card-cyber p-6 mb-8">
-        <p className="text-lg mb-6">{currentMission.description}</p>
-        
-        {currentMission.context && (
-          <div className="bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg p-4 mb-6">
-            <h3 className="font-bold mb-2 text-cyber-purple">Contexto Adicional:</h3>
-            <p>{currentMission.context}</p>
-          </div>
-        )}
-        
-        <div className="bg-cyber-blue/10 border border-cyber-blue/30 rounded-lg p-4">
-          <h3 className="font-bold mb-2 text-cyber-blue">Instrução da Missão:</h3>
-          <p>{currentMission.instruction}</p>
-        </div>
-      </div>
+      <MissionContent 
+        mission={currentMission} 
+      />
 
       <div className="mb-6">
         <h3 className="font-bold mb-2">Sua Proposta de Intervenção:</h3>
@@ -178,39 +138,12 @@ const Mission: React.FC = () => {
       </div>
 
       {evaluation && (
-        <div className="card-cyber p-6 mb-8 bg-cyber-purple/10">
-          <h3 className="font-bold mb-2 text-cyber-purple">Avaliação do Mestre:</h3>
-          <div className="whitespace-pre-wrap">{evaluation}</div>
-          
-          {elementsCount !== undefined && (
-            <div className="mt-4 flex items-center">
-              <span className="font-bold mr-2">Elementos válidos:</span> 
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`w-6 h-6 rounded-full flex items-center justify-center 
-                      ${i < elementsCount ? 'bg-cyber-purple text-white' : 'bg-gray-200 text-gray-500'}`}
-                  >
-                    {i + 1}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {score !== undefined && (
-            <div className="mt-2">
-              <span className="font-bold">Pontuação:</span> {score}/10
-              {score < MINIMUM_SCORE && (
-                <div className="mt-2 flex items-center text-amber-600">
-                  <AlertTriangle className="mr-2 h-4 w-4" />
-                  <span>Pontuação mínima necessária: {MINIMUM_SCORE}/10</span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <MissionEvaluation 
+          evaluation={evaluation}
+          elementsCount={elementsCount}
+          score={score}
+          minimumScore={MINIMUM_SCORE}
+        />
       )}
 
       <div className="flex justify-center gap-4">
