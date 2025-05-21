@@ -36,8 +36,8 @@ const AdventureStartScreen: React.FC = () => {
         <h1 className="text-3xl md:text-5xl font-bold cyber-heading mb-6">
           A Jornada Começa
         </h1>
-        <p className="text-xl max-w-2xl mx-auto" style="color: white;">
-                  {selectedCharacter.name}, em 2999, Salvador aguarda pela sua intervenção. 
+        <p className="text-xl max-w-2xl mx-auto text-white">
+          {selectedCharacter.name}, em 2999, Salvador aguarda pela sua intervenção. 
           Suas decisões podem mudar o destino da última cidade... ou destruí-la para sempre!
         </p>
       </div>
