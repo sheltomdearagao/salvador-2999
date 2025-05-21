@@ -119,10 +119,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 1.2s ease-out',
 				'accordion-up': 'accordion-up 1.2s ease-out',
-				'pulse-glow': 'pulse-glow 6s infinite',
+				'pulse-glow': 'pulse-glow 6s ease-in-out infinite',
 				'float': 'float 6s ease-in-out infinite',
 				'text-flicker': 'text-flicker 4s linear infinite',
-				'function': ease-in-out
 			},
 			backgroundImage: {
 				'cyber-gradient': 'linear-gradient(to right, #0EA5E9, #8B5CF6)',
