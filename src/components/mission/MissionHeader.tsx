@@ -3,6 +3,7 @@ import React from 'react';
 import { Mission } from '@/types/game';
 import { Button } from '@/components/ui/button';
 import { HelpCircle, ArrowLeft } from 'lucide-react';
+import { motion } from "framer-motion";
 
 interface MissionHeaderProps {
   mission: Mission;
@@ -12,32 +13,37 @@ interface MissionHeaderProps {
 
 const MissionHeader: React.FC<MissionHeaderProps> = ({ mission, onBack, onHelp }) => {
   return (
-    <div className="flex items-center gap-4 mb-8">
+    <motion.div 
+      className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6 md:mb-8"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Button 
         variant="outline" 
         size="icon"
-        className="rounded-full"
+        className="rounded-full shadow-md hover:bg-cyber-purple/10 transition-all"
         onClick={onBack}
       >
-        <ArrowLeft className="h-6 w-6" />
+        <ArrowLeft className="h-5 w-5 text-slate-700" />
       </Button>
-      <div>
+      <div className="flex-1">
         <h2 className="text-sm text-cyber-orange font-medium">{mission.zone}</h2>
-        <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold cyber-heading text-slate-800">
           {mission.title}
         </h1>
       </div>
-      <div className="ml-auto">
+      <div className="sm:ml-auto mt-2 sm:mt-0">
         <Button 
           variant="outline"
           size="icon"
-          className="rounded-full"
+          className="rounded-full shadow-md hover:bg-cyber-blue/10 transition-all"
           onClick={onHelp}
         >
-          <HelpCircle className="h-6 w-6" />
+          <HelpCircle className="h-5 w-5 text-slate-700" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

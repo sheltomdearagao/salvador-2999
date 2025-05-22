@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import MissionHeader from './mission/MissionHeader';
 import MissionContent from './mission/MissionContent';
 import MissionEvaluation from './mission/MissionEvaluation';
+import { motion } from "framer-motion";
 
 const MINIMUM_SCORE = 8; // Nota mínima para passar (equivalente a 4+ elementos)
 const MINIMUM_ELEMENTS = 4; // Número mínimo de elementos válidos necessários
@@ -27,7 +28,18 @@ const Mission: React.FC = () => {
   const { toast } = useToast();
 
   if (!currentMission) {
-    return <div className="text-center py-16">Carregando missão...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-center py-16">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Loader2 className="animate-spin h-12 w-12 mx-auto mb-4 text-cyber-purple" />
+          <p className="text-lg text-cyber-purple">Carregando missão...</p>
+        </motion.div>
+      </div>
+    );
   }
 
   const handleBack = () => {
@@ -53,6 +65,10 @@ const Mission: React.FC = () => {
       return;
     }
 
+    // Efeito sonoro ao submeter com sucesso
+    const successSound = new Audio('/sounds/mission-complete.mp3');
+    successSound.play();
+    
     submitMissionResponse(currentMission.id, response, score);
   };
 
@@ -65,6 +81,10 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
+    // Efeito sonoro ao avaliar
+    const evaluateSound = new Audio('/sounds/evaluate.mp3');
+    evaluateSound.play();
 
     setIsEvaluating(true);
     setEvaluation(null);
@@ -92,6 +112,14 @@ const Mission: React.FC = () => {
             description: `Sua proposta deve conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
             variant: "default"
           });
+          
+          // Som para proposta insuficiente
+          const needsImprovementSound = new Audio('/sounds/needs-improvement.mp3');
+          needsImprovementSound.play();
+        } else {
+          // Som para boa avaliação
+          const goodEvaluationSound = new Audio('/sounds/good-evaluation.mp3');
+          goodEvaluationSound.play();
         }
       } else {
         toast({
@@ -99,21 +127,34 @@ const Mission: React.FC = () => {
           description: result.error || "Ocorreu um erro ao avaliar sua resposta.",
           variant: "destructive"
         });
+        
+        // Som para erro
+        const errorSound = new Audio('/sounds/error.mp3');
+        errorSound.play();
       }
     } catch (error) {
       console.error("Erro ao avaliar resposta:", error);
       toast({
         title: "Erro na avaliação",
-        description: "Ocorreu um erro ao conectar com a API OpenAI.",
+        description: "Ocorreu um erro ao conectar com o serviço de avaliação.",
         variant: "destructive"
       });
+      
+      // Som para erro
+      const errorSound = new Audio('/sounds/error.mp3');
+      errorSound.play();
     } finally {
       setIsEvaluating(false);
     }
   };
 
   return (
-    <div className="py-8">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="py-4 md:py-8 px-3 md:px-0 max-w-4xl mx-auto"
+    >
       <MissionHeader 
         mission={currentMission} 
         onBack={handleBack} 
@@ -125,30 +166,40 @@ const Mission: React.FC = () => {
       />
 
       <div className="mb-6">
-        <h3 className="font-bold mb-2">Sua Proposta de Intervenção:</h3>
+        <h3 className="font-bold mb-2 text-slate-800">Sua Proposta de Intervenção:</h3>
         <Textarea
           value={response}
           onChange={(e) => setResponse(e.target.value)}
           placeholder="Digite sua proposta aqui... Lembre-se de incluir: agente, ação, modo, finalidade e detalhamento."
-          className="min-h-[200px] p-4 bg-white/80"
+          className="min-h-[200px] p-4 bg-white/80 text-slate-800 text-base"
         />
-        <div className="text-right text-sm mt-2">
+        <div className="text-right text-sm mt-2 text-slate-700">
           {response.length}/1000 caracteres
         </div>
       </div>
 
       {evaluation && (
-        <MissionEvaluation 
-          evaluation={evaluation}
-          elementsCount={elementsCount}
-          score={score}
-          minimumScore={MINIMUM_SCORE}
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <MissionEvaluation 
+            evaluation={evaluation}
+            elementsCount={elementsCount}
+            score={score}
+            minimumScore={MINIMUM_SCORE}
+          />
+        </motion.div>
       )}
 
-      <div className="flex justify-center gap-4">
+      <motion.div 
+        className="flex flex-col sm:flex-row justify-center gap-4 mt-8"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.2 }}
+      >
         <Button 
-          className="bg-cyber-purple hover:bg-cyber-purple/80"
+          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-300"
           onClick={handleEvaluate}
           disabled={isEvaluating || !response.trim()}
         >
@@ -163,14 +214,14 @@ const Mission: React.FC = () => {
         </Button>
         
         <Button 
-          className="btn-cyber"
+          className="btn-cyber shadow-lg transition-all duration-300"
           onClick={handleSubmit}
           disabled={!isEvaluated || !response.trim() || (score !== undefined && score < MINIMUM_SCORE) || (elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS)}
         >
           Enviar proposta e continuar
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
