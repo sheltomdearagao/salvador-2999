@@ -44,7 +44,7 @@ const MissionMap: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 cyber-heading text-slate-800 text-white">
               Mapa de Salvador 2999
             </h1>
-            <p className="text-base sm:text-lg text-slate-700">
+            <p className="text-base sm:text-lg text-slate-700 text-white">
               Selecione uma zona para iniciar sua missão, {selectedCharacter?.name}
             </p>
           </div>
