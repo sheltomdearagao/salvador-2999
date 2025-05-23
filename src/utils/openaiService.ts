@@ -17,12 +17,16 @@ export const evaluateMissionResponse = async (
     // URL da edge function do Supabase
     const EDGE_FUNCTION_URL = "https://yzwozlxcoexeuondbytt.supabase.co/functions/v1/evaluate-mission";
     
+    // Obter o token de acesso da sessão atual usando o método getSession
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token || '';
+    
     // Enviar a requisição para a edge function
     const response = await fetch(EDGE_FUNCTION_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${supabase.auth.session()?.access_token || ''}`,
+        "Authorization": `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         missionPrompt,
