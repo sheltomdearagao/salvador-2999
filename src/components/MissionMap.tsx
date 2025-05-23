@@ -41,7 +41,7 @@ const MissionMap: React.FC = () => {
           </Button>
           
           <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 cyber-heading text-slate-800 text-white">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 cyber-heading text-slate-800 text-silver">
               Mapa de Salvador 2999
             </h1>
             <p className="text-base sm:text-lg text-slate-700 text-white">
