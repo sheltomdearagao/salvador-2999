@@ -12,10 +12,12 @@ serve(async (req) => {
   }
   
   try {
+    console.log("📝 Recebendo requisição para avaliação de missão");
     const { missionPrompt, userResponse } = await req.json();
     
     // Verificar se os dados necessários estão presentes
     if (!missionPrompt || !userResponse) {
+      console.error("❌ Dados incompletos na requisição");
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -30,6 +32,7 @@ serve(async (req) => {
 
     // Verificar se a chave da API está configurada
     if (!OPENAI_API_KEY) {
+      console.error("❌ Chave da API OpenAI não encontrada nas variáveis de ambiente");
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -42,6 +45,7 @@ serve(async (req) => {
       );
     }
 
+    console.log("🔑 Chave da API OpenAI encontrada, enviando requisição");
     // Enviar requisição para a API OpenAI
     const response = await fetch(OPENAI_API_URL, {
       method: "POST",
@@ -91,6 +95,7 @@ serve(async (req) => {
     const data = await response.json();
     
     if (data.error) {
+      console.error("❌ Erro na API OpenAI:", data.error.message);
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -103,6 +108,7 @@ serve(async (req) => {
       );
     }
 
+    console.log("✅ Avaliação concluída com sucesso");
     const evaluation = data.choices[0].message.content;
     
     // Extrair pontuação (formato "Nota: X/10")
@@ -126,6 +132,7 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    console.error("❌ Erro na função de avaliação:", error);
     return new Response(
       JSON.stringify({ success: false, error: error.message || "Erro desconhecido." }),
       { 

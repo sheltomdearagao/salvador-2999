@@ -1,1 +1,5 @@
+
 project_id = "yzwozlxcoexeuondbytt"
+
+[functions.evaluate-mission]
+verify_jwt = false

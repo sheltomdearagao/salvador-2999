@@ -24,9 +24,21 @@ const MissionContent: React.FC<MissionContentProps> = ({ mission }) => {
         </div>
       )}
       
-      <div className="bg-cyber-blue/10 border border-cyber-blue/30 rounded-lg p-4">
+      <div className="bg-cyber-blue/10 border border-cyber-blue/30 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-cyber-blue">Instrução da Missão:</h3>
         <p className="text-slate-800">{mission.instruction}</p>
+      </div>
+
+      <div className="bg-green-100 border border-green-300 rounded-lg p-4">
+        <h3 className="font-bold mb-2 text-green-700">Lembre-se:</h3>
+        <p className="text-slate-800">Uma proposta de intervenção completa deve conter cinco elementos:</p>
+        <ul className="list-disc ml-5 mt-2 text-slate-800">
+          <li><strong>Ação</strong> (O quê?) - O que deve ser feito para solucionar o problema</li>
+          <li><strong>Agente</strong> (Quem?) - Quem será o responsável por executar a ação</li>
+          <li><strong>Modo/Meio</strong> (Como?) - De que maneira ou através de qual recurso a ação será realizada</li>
+          <li><strong>Efeito</strong> (Para quê?) - Finalidade ou resultado esperado da ação</li>
+          <li><strong>Detalhamento</strong> - Informação adicional sobre algum dos elementos anteriores</li>
+        </ul>
       </div>
     </motion.div>
   );
