@@ -38,7 +38,7 @@ const AdventureStartScreen: React.FC = () => {
       <div className="card-cyber p-6 flex flex-col md:flex-row items-center gap-8 mb-10">
         <div className="character-portrait w-full md:w-1/3">
           <div className="relative pb-[123%] rounded-lg overflow-hidden">
-            <img src={selectedCharacter.imagePath} alt={selectedCharacter.name} className="absolute inset-0 w-full h-full object-fill" />
+            <img src={selectedCharacter.imagePath} alt={selectedCharacter.name} className="absolute inset-0 w-full h-full object-contain" />
           </div>
         </div>
         
