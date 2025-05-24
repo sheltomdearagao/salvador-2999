@@ -15,10 +15,6 @@ const MissionMap: React.FC = () => {
   };
 
   const handleSelectMission = (mission) => {
-    // Efeito sonoro ao selecionar uma missão
-    const selectSound = new Audio('/sounds/select-mission.mp3');
-    selectSound.play();
-    
     selectMission(mission);
   };
 
@@ -34,17 +30,17 @@ const MissionMap: React.FC = () => {
           <Button 
             variant="outline" 
             size="icon"
-            className="rounded-full mr-4 shadow-md hover:bg-cyber-purple/10 transition-all"
+            className="rounded-full mr-4 shadow-md hover:bg-cyber-purple/10 transition-all bg-white/90"
             onClick={handleBack}
           >
             <ArrowLeft className="h-5 w-5 text-slate-700" />
           </Button>
           
           <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 cyber-heading text-slate-800 text-zinc-300">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 cyber-heading-dark">
               Mapa de Salvador 2999
             </h1>
-            <p className="text-base sm:text-lg text-slate-700 text-zinc-300">
+            <p className="text-base sm:text-lg text-slate-700">
               Selecione uma zona para iniciar sua missão, {selectedCharacter?.name}
             </p>
           </div>
@@ -53,14 +49,14 @@ const MissionMap: React.FC = () => {
         <Button 
           variant="outline"
           size="icon"
-          className="rounded-full self-start md:self-auto shadow-md hover:bg-cyber-blue/10 transition-all"
+          className="rounded-full self-start md:self-auto shadow-md hover:bg-cyber-blue/10 transition-all bg-white/90"
           onClick={showHelpScreen}
         >
           <HelpCircle className="h-5 w-5 text-slate-700" />
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {missions.map((mission) => (
           <motion.div
             key={mission.id}
@@ -82,17 +78,17 @@ const MissionMap: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.5 }}
       >
-        <div className="inline-block bg-parchment/90 p-4 rounded-lg border border-dark-parchment shadow-lg">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="font-bold text-lg text-slate-800">Progresso da Jornada:</span>
-            <span className="text-xl font-orbitron text-cyber-purple">
+        <div className="inline-block bg-white/95 p-6 rounded-lg border border-gray-200 shadow-lg">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="font-bold text-xl text-slate-800">Progresso da Jornada:</span>
+            <span className="text-2xl font-orbitron text-cyber-purple font-bold">
               {gameState.completedMissions} / 6
             </span>
           </div>
           
-          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
             <motion.div 
-              className="bg-cyber-gradient h-2.5 rounded-full"
+              className="bg-gradient-to-r from-cyber-blue to-cyber-purple h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${(gameState.completedMissions / 6) * 100}%` }}
               transition={{ duration: 1, delay: 0.7 }}
@@ -100,7 +96,7 @@ const MissionMap: React.FC = () => {
           </div>
           
           {gameState.completedMissions > 0 && (
-            <p className="text-sm text-cyber-purple italic">
+            <p className="text-sm text-cyber-purple italic font-medium">
               Cada decisão molda o futuro de Salvador. Continue sua jornada.
             </p>
           )}

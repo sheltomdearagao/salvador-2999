@@ -113,60 +113,61 @@
   }
   
   .card-cyber {
-    @apply relative rounded-lg overflow-hidden border border-cyber-blue/50 bg-parchment/95 backdrop-blur-sm;
-    box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+    @apply relative rounded-lg overflow-hidden border border-cyber-blue/50 bg-white/95 backdrop-blur-sm shadow-lg;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
   }
 
   .character-card {
-    @apply relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300;
+    @apply relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300 shadow-md hover:shadow-xl;
+    aspect-ratio: 3/4;
   }
   
   .character-card-active {
-    @apply border-cyber-orange animate-pulse-glow shadow-lg;
+    @apply border-cyber-orange animate-pulse-glow shadow-xl transform scale-105;
   }
   
   .character-card-inactive {
-    @apply border-transparent;
+    @apply border-gray-300 hover:border-cyber-blue;
   }
   
   .mission-card {
-    @apply relative overflow-hidden rounded-lg border-2 transition-all duration-300;
+    @apply relative overflow-hidden rounded-lg border-2 transition-all duration-300 bg-white shadow-md hover:shadow-xl;
   }
   
   .mission-locked {
-    @apply border-gray-500 opacity-70 grayscale cursor-not-allowed;
+    @apply border-gray-300 opacity-60 grayscale cursor-not-allowed;
   }
   
   .mission-available {
-    @apply border-cyber-blue cursor-pointer hover:scale-105 hover:shadow-lg animate-pulse-glow;
+    @apply border-cyber-blue cursor-pointer hover:scale-102 hover:border-cyber-purple;
   }
   
   .mission-completed {
-    @apply border-cyber-purple hover:scale-105 hover:shadow-lg cursor-pointer;
+    @apply border-cyber-purple hover:scale-102 cursor-pointer;
   }
   
   .cyber-heading {
-    @apply font-orbitron font-bold text-transparent bg-clip-text bg-cyber-gradient animate-text-flicker;
+    @apply font-orbitron font-bold text-transparent bg-clip-text;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 25%, #c7d2fe 50%, #a5b4fc 75%, #8b5cf6 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease-in-out infinite, title-expand 1.5s ease-out;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
   }
 
-  /* Melhorias para o enquadramento de imagens */
+  .cyber-heading-dark {
+    @apply font-orbitron font-bold text-transparent bg-clip-text;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #64748b 75%, #94a3b8 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease-in-out infinite;
+  }
+
   .character-portrait img {
-    @apply object-cover object-center;
-  }
-
-  /* Adicionando novas animações */
-  @keyframes float-subtle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-
-  .animate-float-subtle {
-    animation: float-subtle 3s ease-in-out infinite;
+    @apply object-cover object-center w-full h-full;
   }
 
   .parchment-bg {
-    background-color: #F2E8CF;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d3bf8d' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-color: #F8FAFC;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e2e8f0' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
 
   .steampunk-bg {
@@ -174,5 +175,42 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes title-expand {
+    0% { 
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse-glow {
+    '0%, 100%': { 
+      boxShadow: '0 0 10px rgba(14, 165, 233, 0.7), 0 0 20px rgba(14, 165, 233, 0.4)' 
+    },
+    '50%': { 
+      boxShadow: '0 0 15px rgba(14, 165, 233, 0.9), 0 0 30px rgba(14, 165, 233, 0.6)' 
+    },
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
   }
 }

@@ -15,7 +15,6 @@ const GameContainer: React.FC = () => {
   const { gameState } = useGame();
   const { currentScreen } = gameState;
 
-  // Configurações para animações de transição entre telas
   const pageTransition = {
     type: "tween",
     ease: "anticipate",
@@ -30,12 +29,12 @@ const GameContainer: React.FC = () => {
 
   return (
     <div className="game-container">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px] pointer-events-none"></div>
       
       <div className="relative z-10 min-h-[85vh]">
         <div className="absolute top-2 right-3 z-20">
-          <span className="bg-green-600/80 text-white text-xs px-2 py-1 rounded-md">
-            Versão Pública
+          <span className="bg-emerald-600/90 text-white text-xs px-3 py-1.5 rounded-full font-medium shadow-lg">
+            Versão Demo
           </span>
         </div>
 

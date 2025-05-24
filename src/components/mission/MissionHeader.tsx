@@ -22,14 +22,14 @@ const MissionHeader: React.FC<MissionHeaderProps> = ({ mission, onBack, onHelp }
       <Button 
         variant="outline" 
         size="icon"
-        className="rounded-full shadow-md hover:bg-cyber-purple/10 transition-all"
+        className="rounded-full shadow-md hover:bg-cyber-purple/10 transition-all bg-white/90"
         onClick={onBack}
       >
         <ArrowLeft className="h-5 w-5 text-slate-700" />
       </Button>
       <div className="flex-1">
-        <h2 className="text-sm text-cyber-orange font-medium">{mission.zone}</h2>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold cyber-heading text-slate-800">
+        <h2 className="text-sm text-cyber-orange font-medium uppercase tracking-wider">{mission.zone}</h2>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold cyber-heading-dark">
           {mission.title}
         </h1>
       </div>
@@ -37,7 +37,7 @@ const MissionHeader: React.FC<MissionHeaderProps> = ({ mission, onBack, onHelp }
         <Button 
           variant="outline"
           size="icon"
-          className="rounded-full shadow-md hover:bg-cyber-blue/10 transition-all"
+          className="rounded-full shadow-md hover:bg-cyber-blue/10 transition-all bg-white/90"
           onClick={onHelp}
         >
           <HelpCircle className="h-5 w-5 text-slate-700" />

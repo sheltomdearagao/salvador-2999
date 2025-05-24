@@ -37,25 +37,25 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick }) => {
 
   return (
     <div
-      className={`mission-card rounded-lg overflow-hidden shadow-md ${
+      className={`mission-card rounded-lg overflow-hidden ${
         mission.status === 'locked'
-          ? 'mission-locked opacity-75'
+          ? 'mission-locked'
           : mission.status === 'completed'
-          ? 'mission-completed border-2 border-cyber-purple/30'
-          : 'mission-available hover:shadow-xl transition-shadow'
+          ? 'mission-completed border-2 border-cyber-purple/40'
+          : 'mission-available hover:shadow-xl transition-all duration-300'
       }`}
       onClick={mission.status !== 'locked' ? onClick : undefined}
     >
-      <div className="bg-parchment p-4 sm:p-5 h-full flex flex-col">
-        <h3 className="text-xl font-bold mb-2 text-slate-800">{mission.title}</h3>
-        <div className="mb-3 inline-block px-3 py-1 rounded-full bg-cyber-blue/20 text-cyber-blue text-sm font-semibold">
+      <div className="bg-white p-5 h-full flex flex-col min-h-[280px]">
+        <div className="mb-3 inline-block px-3 py-1.5 rounded-full bg-cyber-blue/20 text-cyber-blue text-sm font-semibold w-fit">
           {mission.zone}
         </div>
-        <p className="line-clamp-3 text-sm mb-4 flex-grow text-slate-700">{mission.description}</p>
+        <h3 className="text-xl font-bold mb-3 text-slate-800 leading-tight">{mission.title}</h3>
+        <p className="text-sm mb-4 flex-grow text-slate-600 leading-relaxed line-clamp-4">{mission.description}</p>
         
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
           <div className="flex items-center">
-            <span className={`flex items-center ${statusInfo.textColor}`}>
+            <span className={`flex items-center ${statusInfo.textColor} font-medium`}>
               {statusInfo.icon}
               {statusInfo.text}
             </span>
@@ -65,7 +65,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick }) => {
             <Button 
               variant="ghost" 
               size="sm"
-              className={`${mission.status === 'completed' ? 'text-cyber-purple hover:text-cyber-purple/80' : 'text-cyber-blue hover:text-cyber-blue/80'} transition-colors`}
+              className={`${mission.status === 'completed' ? 'text-cyber-purple hover:text-cyber-purple/80' : 'text-cyber-blue hover:text-cyber-blue/80'} transition-colors font-medium`}
             >
               {mission.status === 'completed' ? 'Ver detalhes' : 'Iniciar'}
             </Button>

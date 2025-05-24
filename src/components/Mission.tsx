@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { HelpCircle, ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
 import MissionHeader from './mission/MissionHeader';
@@ -11,8 +11,8 @@ import MissionContent from './mission/MissionContent';
 import MissionEvaluation from './mission/MissionEvaluation';
 import { motion } from "framer-motion";
 
-const MINIMUM_SCORE = 8; // Nota mínima para passar (equivalente a 4+ elementos)
-const MINIMUM_ELEMENTS = 4; // Número mínimo de elementos válidos necessários
+const MINIMUM_SCORE = 8;
+const MINIMUM_ELEMENTS = 4;
 
 const Mission: React.FC = () => {
   const { gameState, submitMissionResponse, showHelpScreen, setCurrentScreen } = useGame();
@@ -40,7 +40,7 @@ const Mission: React.FC = () => {
         </motion.div>
       </div>
     );
-  }
+  };
 
   const handleBack = () => {
     setCurrentScreen('missionMap');
@@ -50,7 +50,7 @@ const Mission: React.FC = () => {
     if (!isEvaluated) {
       toast({
         title: "Avaliação necessária",
-        description: "Você precisa avaliar sua proposta com o mestre antes de continuar.",
+        description: "Você precisa avaliar sua proposta com o especialista antes de continuar.",
         variant: "destructive"
       });
       return;
@@ -65,10 +65,6 @@ const Mission: React.FC = () => {
       return;
     }
 
-    // Efeito sonoro ao submeter com sucesso
-    const successSound = new Audio('/sounds/mission-complete.mp3');
-    successSound.play();
-    
     submitMissionResponse(currentMission.id, response, score);
   };
 
@@ -81,10 +77,6 @@ const Mission: React.FC = () => {
       });
       return;
     }
-
-    // Efeito sonoro ao avaliar
-    const evaluateSound = new Audio('/sounds/evaluate.mp3');
-    evaluateSound.play();
 
     setIsEvaluating(true);
     setEvaluation(null);
@@ -104,7 +96,6 @@ const Mission: React.FC = () => {
         setElementsCount(result.elementsCount);
         setIsEvaluated(true);
         
-        // Notificar o usuário se sua proposta não atende aos requisitos mínimos
         if ((result.score && result.score < MINIMUM_SCORE) || 
             (result.elementsCount && result.elementsCount < MINIMUM_ELEMENTS)) {
           toast({
@@ -112,14 +103,6 @@ const Mission: React.FC = () => {
             description: `Sua proposta deve conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
             variant: "default"
           });
-          
-          // Som para proposta insuficiente
-          const needsImprovementSound = new Audio('/sounds/needs-improvement.mp3');
-          needsImprovementSound.play();
-        } else {
-          // Som para boa avaliação
-          const goodEvaluationSound = new Audio('/sounds/good-evaluation.mp3');
-          goodEvaluationSound.play();
         }
       } else {
         toast({
@@ -127,10 +110,6 @@ const Mission: React.FC = () => {
           description: result.error || "Ocorreu um erro ao avaliar sua resposta.",
           variant: "destructive"
         });
-        
-        // Som para erro
-        const errorSound = new Audio('/sounds/error.mp3');
-        errorSound.play();
       }
     } catch (error) {
       console.error("Erro ao avaliar resposta:", error);
@@ -139,10 +118,6 @@ const Mission: React.FC = () => {
         description: "Ocorreu um erro ao conectar com o serviço de avaliação.",
         variant: "destructive"
       });
-      
-      // Som para erro
-      const errorSound = new Audio('/sounds/error.mp3');
-      errorSound.play();
     } finally {
       setIsEvaluating(false);
     }
@@ -161,19 +136,17 @@ const Mission: React.FC = () => {
         onHelp={showHelpScreen} 
       />
 
-      <MissionContent 
-        mission={currentMission} 
-      />
+      <MissionContent mission={currentMission} />
 
       <div className="mb-6">
-        <h3 className="font-bold mb-2 text-slate-800">Sua Proposta de Intervenção:</h3>
+        <h3 className="font-bold mb-3 text-slate-800 text-lg">Sua Proposta de Intervenção:</h3>
         <Textarea
           value={response}
           onChange={(e) => setResponse(e.target.value)}
           placeholder="Digite sua proposta aqui... Lembre-se de incluir: agente, ação, modo, finalidade e detalhamento."
-          className="min-h-[200px] p-4 bg-white/80 text-slate-800 text-base"
+          className="min-h-[200px] p-4 bg-white border-2 border-gray-200 text-slate-800 text-base focus:border-cyber-blue"
         />
-        <div className="text-right text-sm mt-2 text-slate-700">
+        <div className="text-right text-sm mt-2 text-slate-600">
           {response.length}/1000 caracteres
         </div>
       </div>
@@ -199,17 +172,17 @@ const Mission: React.FC = () => {
         transition={{ duration: 0.2 }}
       >
         <Button 
-          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-300"
+          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
           onClick={handleEvaluate}
           disabled={isEvaluating || !response.trim()}
         >
           {isEvaluating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Consultando o mestre...
+              Consultando o especialista...
             </>
           ) : (
-            'Consultar o mestre'
+            'Consultar o especialista'
           )}
         </Button>
         
