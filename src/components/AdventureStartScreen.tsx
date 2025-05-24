@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-
 const AdventureStartScreen: React.FC = () => {
   const {
     gameState,
@@ -13,27 +11,22 @@ const AdventureStartScreen: React.FC = () => {
   const {
     selectedCharacter
   } = gameState;
-
   if (!selectedCharacter) {
     return <div className="text-center py-16">Carregando...</div>;
   }
-
   const handleStartAdventure = () => {
     setCurrentScreen("missionMap");
   };
-
   const handleBack = () => {
     setCurrentScreen("characterSelection");
   };
-
-  return (
-    <div className="py-8 max-w-4xl mx-auto px-4">
+  return <div className="py-8 max-w-4xl mx-auto px-4">
       <Button variant="outline" size="icon" className="rounded-full mb-8" onClick={handleBack}>
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
       <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-5xl font-bold cyber-heading mb-6">
+        <h1 className="text-3xl cyber-heading mb-6 font-bold text-zinc-200 md:text-6xl">
           A Jornada Começa
         </h1>
         <p className="text-xl max-w-2xl mx-auto text-white">
@@ -45,11 +38,7 @@ const AdventureStartScreen: React.FC = () => {
       <div className="card-cyber p-6 flex flex-col md:flex-row items-center gap-8 mb-10">
         <div className="character-portrait w-full md:w-1/3">
           <div className="relative pb-[123%] rounded-lg overflow-hidden bg-gray-100">
-            <img 
-              src={selectedCharacter.imagePath} 
-              alt={selectedCharacter.name} 
-              className="absolute inset-0 w-full h-full object-contain object-center" 
-            />
+            <img src={selectedCharacter.imagePath} alt={selectedCharacter.name} className="absolute inset-0 w-full h-full object-contain object-center" />
           </div>
         </div>
         
@@ -75,8 +64,6 @@ const AdventureStartScreen: React.FC = () => {
           Iniciar Aventura
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AdventureStartScreen;
