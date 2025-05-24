@@ -21,7 +21,7 @@ const StartScreen: React.FC = () => {
       <h1 className="text-4xl md:text-6xl font-bold mb-6 cyber-heading">
         Salvador 2999
       </h1>
-      <h2 className="text-2xl md:text-3xl font-bold mb-8 text-slate-700">
+      <h2 className="text-2xl mb-8 text-zinc-300 font-bold md:text-4xl">
         Crônicas da Última Cidade
       </h2>
       
