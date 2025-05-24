@@ -34,7 +34,7 @@ const CharacterSelection: React.FC = () => {
           <ArrowLeft className="h-6 w-6" />
         </Button>
         
-        <h1 className="text-3xl md:text-4xl font-bold cyber-heading">
+        <h1 className="text-3xl font-bold cyber-heading text-zinc-200 md:text-4xl">
           Escolha seu Personagem
         </h1>
       </div>
