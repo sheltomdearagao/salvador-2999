@@ -58,62 +58,49 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `Você é um avaliador especializado na Competência V da redação do ENEM, que avalia propostas de intervenção. 
-            
-            Uma proposta de intervenção COMPLETA deve apresentar 5 elementos: 
-            1. **Ação (O quê?)** - O que deve ser feito para solucionar ou mitigar o problema
-            2. **Agente (Quem?)** - Quem será o responsável por executar a ação proposta
-            3. **Modo/Meio (Como?)** - De que maneira ou através de qual recurso a ação será realizada
-            4. **Efeito (Para quê?)** - Finalidade ou resultado esperado da ação proposta
-            5. **Detalhamento** - Informação adicional sobre algum dos elementos anteriores
-            
-            Analise a resposta do jogador e identifique quantos desses elementos estão presentes corretamente. 
-            Avalie a proposta de intervenção em uma escala de 0 a 200. 
-            Uma proposta com 5 elementos deve receber nota 200. 
-            Uma proposta com 4 elementos deve receber nota 160.
-            Uma proposta com 3 elementos deve receber nota 120.
-            Uma proposta com 2 elementos deve receber nota 80.
-            Uma proposta com 1 elementos deve receber nota 40.
-            Uma proposta apenas com elementos inválidos ou sem nenhum elemento deve receber nota 0
-            Propostas qeu desrespeitem os direitos humanos devem receber zero e deve ser explicado o motivo da nota 0 por DDH (Desrespeito aos Direitos Humanos)
-            
-            IMPORTANTE: Formate sua resposta de forma clara e organizada, utilizando markdown para melhor legibilidade.
-            
-            ## Estrutura obrigatória da sua avaliação:
+            content: `Você é um especialista em avaliação da Competência V da redação do ENEM.
 
-            ### 📋 Análise dos Elementos
-            **Elementos encontrados:**
-            - Lista cada elemento identificado com explicação clara
-            
-            **Elementos ausentes:**
-            - Lista elementos que faltam ou precisam de melhorias
-            
-            ### 📊 Resultado da Avaliação
-            **Nota:** X/200
-            **Elementos válidos:** Y/5
-            
-            ### 💡 Sugestões de Melhoria
-            - Forneça dicas específicas e construtivas para aprimorar a proposta
-            
-            ### ✅ Exemplo de Proposta Completa
-            - Se a nota for baixa, ofereça um exemplo prático de como incluir os elementos faltantes
+CRITÉRIOS DE AVALIAÇÃO:
+Uma proposta de intervenção completa deve ter 5 elementos:
+1. AÇÃO - O que deve ser feito (verbo/ação concreta)
+2. AGENTE - Quem executará (governo, ministério, escola, família, etc.)
+3. MODO/MEIO - Como será feito (por meio de, através de, etc.)
+4. EFEITO - Para que serve (finalidade: para que, a fim de, etc.)
+5. DETALHAMENTO - Informação adicional sobre qualquer elemento
 
-            Considere como agente válido todos os agentes indicados para executar uma determinada ação.Exemplos: "governo federal", "governos estaduais", "governos municipais", "Ministério da Educação", "Ministério da Saúde", "escolas", "professores", "família", "ONGs", "sociedade civil", "mídia", "influenciadores digitais", "instituições de ensino superior", "empresas privadas", "organizações internacionais", "plataformas digitais", "universidades", "comunidade escolar", "secretarias de educação", "profissionais da saúde" Não são válidos agentes extremamante vagos, como "alguém" e "ninguém".
-            Considere como ação válida todas as ações, normalmente representadas por verbos e locuções verbais, que expressem alguma medida a ser executada pelo agente. Exemplos de ações válidas: "criação de campanhas de conscientização", "inclusão de temas nas diretrizes curriculares escolares", "oferta de cursos de capacitação", "fiscalização mais rigorosa por parte do Estado", "investimento em infraestrutura", "ampliação do acesso a serviços públicos", "parcerias entre setor público e privado", "uso das redes sociais para difusão de informação", "promoção de debates em ambientes educacionais", "criação de centros de acolhimento e apoio", "oferta de atendimento psicológico gratuito", "implementação de políticas públicas específicas", "criação de aplicativos educativos", "oferta de bolsas de estudo", "apoio a ONGs e projetos sociais". Ações inválidas são do tipo: "fazer alguma coisa", "resolver esse problema", "tomar alguma atitude". 
-            Considere como modo/meio as expressões que indicam a forma de realizar a ação indicada. Normalmente esse elemento é introduzido por expressões como "através de", "por meio de", "mediante", "por intermédio de". Exemplos de modo/meio válidos: "por meio de campanhas publicitárias", "por intermédio de projetos educacionais", "por meio da criação de leis específicas", "por meio da implementação de políticas públicas", "através da oferta de oficinas e palestras", "com a utilização das redes sociais", "por meio da distribuição de materiais informativos", "através de parcerias com instituições especializadas", "por meio da capacitação de profissionais", "com o uso de plataformas digitais", "por meio da veiculação de conteúdos educativos", "através de ações comunitárias", "por meio de editais de incentivo", "com a criação de centros de atendimento", "por meio da reformulação curricular".
-            Considere como finalidade elementos que indiquem os efeitos ou objetivos da ação. Normalmente esse elemento é introduzido por expressões como "a fim de", "para", "com a finalidade de", "com o objetivo de", "o objetivo é", "a finalidade é". Exemplos: "com o objetivo de promover a conscientização da população", "a fim de reduzir os índices de desigualdade social", "com o intuito de garantir o acesso à informação", "para assegurar a inclusão de grupos marginalizados", "a fim de combater a desinformação", "com o objetivo de estimular o pensamento crítico", "para fortalecer o papel da educação na sociedade", "com o intuito de prevenir comportamentos discriminatórios", "a fim de ampliar o acesso a serviços essenciais", "para garantir o pleno exercício da cidadania", "com o objetivo de reduzir os impactos sociais do problema", "a fim de fomentar o respeito à diversidade", "com o intuito de promover uma cultura de paz", "para assegurar a equidade de oportunidades", "a fim de formar uma sociedade mais justa e empática"
-            Considere como detalhamento ideias que adicionam informações suplementares sobre algum dos outros elementos, como explicações, comparações, exemplificações, especificações, alguns apostos, mas não orações adjetivas. O detalhamento da finalidade é um elemento que se relaciona com o elemento finalidade através de conectivos e indicam a consequência ou o efeito da realização do elemento finalidade. Esse detalhamento da finalidade é conhecido como "efeito do efeito".
-            `
+PONTUAÇÃO:
+- 5 elementos = 200 pontos
+- 4 elementos = 160 pontos  
+- 3 elementos = 120 pontos
+- 2 elementos = 80 pontos
+- 1 elemento = 40 pontos
+- 0 elementos = 0 pontos
 
-            
+FORMATO DE RESPOSTA OBRIGATÓRIO:
+## Análise dos Elementos
+
+**Elementos identificados:**
+[Liste cada elemento encontrado]
+
+**Elementos ausentes:**
+[Liste elementos que faltam]
+
+## Resultado
+**Pontuação:** X/200
+**Elementos válidos:** Y/5
+
+## Sugestões
+[Dicas específicas para melhorar]
+
+Seja objetivo e use exatamente este formato.`
           },
           {
             role: "user",
-            content: `**Missão:** ${missionPrompt}\n\n**Resposta do jogador:** ${userResponse}\n\nAvalie esta proposta de intervenção conforme os critérios da Competência V do ENEM.`
+            content: `**Missão:** ${missionPrompt}\n\n**Resposta do usuário:** ${userResponse}\n\nAvalie esta proposta de intervenção.`
           }
         ],
         temperature: 0.2,
-        max_tokens: 1000,
+        max_tokens: 800,
       }),
     });
 
@@ -136,13 +123,20 @@ serve(async (req) => {
     console.log("✅ Avaliação concluída com sucesso");
     const evaluation = data.choices[0].message.content;
     
-    // Extrair pontuação (procurar por diferentes formatos)
-    const scoreMatch = evaluation.match(/(?:Nota|Score):\s*(\d+(?:\.\d+)?)(?:\/10)?/i);
-    const score = scoreMatch ? parseFloat(scoreMatch[1]) : undefined;
+    // Extrair pontuação com regex mais robusta
+    const scoreMatch = evaluation.match(/\*\*Pontuação:\*\*\s*(\d+)\/200/i) || 
+                     evaluation.match(/Pontuação:\s*(\d+)\/200/i) ||
+                     evaluation.match(/(\d+)\/200/);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : undefined;
     
-    // Extrair contagem de elementos (procurar por diferentes formatos)
-    const elementsMatch = evaluation.match(/(?:Elementos válidos|Elementos):\s*(\d+)(?:\/5)?/i);
+    // Extrair elementos válidos
+    const elementsMatch = evaluation.match(/\*\*Elementos válidos:\*\*\s*(\d+)\/5/i) ||
+                         evaluation.match(/Elementos válidos:\s*(\d+)\/5/i) ||
+                         evaluation.match(/(\d+)\/5/);
     const elementsCount = elementsMatch ? parseInt(elementsMatch[1]) : undefined;
+
+    console.log("📊 Pontuação extraída:", score);
+    console.log("📊 Elementos extraídos:", elementsCount);
 
     // Montando a resposta final
     const result = {

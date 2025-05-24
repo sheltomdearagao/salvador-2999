@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
@@ -9,8 +10,10 @@ import MissionHeader from './mission/MissionHeader';
 import MissionContent from './mission/MissionContent';
 import MissionEvaluation from './mission/MissionEvaluation';
 import { motion } from "framer-motion";
-const MINIMUM_SCORE = 8;
+
+const MINIMUM_SCORE = 160; // 8 elementos na escala de 200
 const MINIMUM_ELEMENTS = 4;
+
 const Mission: React.FC = () => {
   const {
     gameState,
@@ -18,36 +21,31 @@ const Mission: React.FC = () => {
     showHelpScreen,
     setCurrentScreen
   } = useGame();
-  const {
-    currentMission,
-    missionResponses
-  } = gameState;
+
+  const { currentMission, missionResponses } = gameState;
   const [response, setResponse] = useState(currentMission ? missionResponses[currentMission.id] || '' : '');
   const [evaluation, setEvaluation] = useState<string | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [score, setScore] = useState<number | undefined>(undefined);
   const [elementsCount, setElementsCount] = useState<number | undefined>(undefined);
   const [isEvaluated, setIsEvaluated] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   if (!currentMission) {
-    return <div className="flex justify-center items-center min-h-[60vh] text-center py-16">
-        <motion.div initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} transition={{
-        duration: 0.5
-      }}>
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-center py-16">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
           <Loader2 className="animate-spin h-12 w-12 mx-auto mb-4 text-cyber-purple" />
           <p className="text-lg text-cyber-purple">Carregando missão...</p>
         </motion.div>
-      </div>;
+      </div>
+    );
   }
+
   const handleBack = () => {
     setCurrentScreen('missionMap');
   };
+
   const handleSubmit = () => {
     if (!isEvaluated) {
       toast({
@@ -57,7 +55,8 @@ const Mission: React.FC = () => {
       });
       return;
     }
-    if (score && score < MINIMUM_SCORE || elementsCount && elementsCount < MINIMUM_ELEMENTS) {
+
+    if ((score && score < MINIMUM_SCORE) || (elementsCount && elementsCount < MINIMUM_ELEMENTS)) {
       toast({
         title: "Proposta insuficiente",
         description: `Sua proposta precisa conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
@@ -65,8 +64,10 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
     submitMissionResponse(currentMission.id, response, score);
   };
+
   const handleEvaluate = async () => {
     if (!response.trim()) {
       toast({
@@ -76,19 +77,26 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
     setIsEvaluating(true);
     setEvaluation(null);
     setScore(undefined);
     setElementsCount(undefined);
     setIsEvaluated(false);
+
     try {
-      const result = await evaluateMissionResponse(`${currentMission.description}\n\n${currentMission.instruction}`, response);
+      const result = await evaluateMissionResponse(
+        `${currentMission.description}\n\n${currentMission.instruction}`,
+        response
+      );
+
       if (result.success) {
         setEvaluation(result.evaluation || "");
         setScore(result.score);
         setElementsCount(result.elementsCount);
         setIsEvaluated(true);
-        if (result.score && result.score < MINIMUM_SCORE || result.elementsCount && result.elementsCount < MINIMUM_ELEMENTS) {
+
+        if ((result.score && result.score < MINIMUM_SCORE) || (result.elementsCount && result.elementsCount < MINIMUM_ELEMENTS)) {
           toast({
             title: "Proposta precisa de melhorias",
             description: `Sua proposta deve conter pelo menos ${MINIMUM_ELEMENTS} elementos válidos para avançar.`,
@@ -113,53 +121,85 @@ const Mission: React.FC = () => {
       setIsEvaluating(false);
     }
   };
-  return <motion.div initial={{
-    opacity: 0
-  }} animate={{
-    opacity: 1
-  }} transition={{
-    duration: 0.3
-  }} className="py-4 md:py-8 px-3 md:px-0 max-w-4xl mx-auto">
-      <MissionHeader mission={currentMission} onBack={handleBack} onHelp={showHelpScreen} />
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="py-4 md:py-8 px-3 md:px-0 max-w-4xl mx-auto"
+    >
+      <MissionHeader 
+        mission={currentMission} 
+        onBack={handleBack} 
+        onHelp={showHelpScreen} 
+      />
 
       <MissionContent mission={currentMission} />
 
       <div className="mb-6">
         <h3 className="font-bold mb-3 text-zinc-100 text-2xl">Sua Proposta de Intervenção:</h3>
-        <Textarea value={response} onChange={e => setResponse(e.target.value)} placeholder="Digite sua proposta aqui... Lembre-se de incluir: agente, ação, modo, finalidade e detalhamento." className="min-h-[200px] p-4 bg-white border-2 border-gray-200 text-slate-800 text-base focus:border-cyber-blue" />
+        <Textarea
+          value={response}
+          onChange={(e) => setResponse(e.target.value)}
+          placeholder="Digite sua proposta aqui... Lembre-se de incluir: agente, ação, modo, finalidade e detalhamento."
+          className="min-h-[200px] p-4 bg-white border-2 border-gray-200 text-slate-800 text-base focus:border-cyber-blue"
+        />
         <div className="text-right text-sm mt-2 text-slate-600">
           {response.length}/1000 caracteres
         </div>
       </div>
 
-      {evaluation && <motion.div initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.5
-    }}>
-          <MissionEvaluation evaluation={evaluation} elementsCount={elementsCount} score={score} minimumScore={MINIMUM_SCORE} />
-        </motion.div>}
+      {evaluation && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <MissionEvaluation 
+            evaluation={evaluation}
+            elementsCount={elementsCount}
+            score={score}
+            minimumScore={8} // 8 na escala de 10
+          />
+        </motion.div>
+      )}
 
-      <motion.div className="flex flex-col sm:flex-row justify-center gap-4 mt-8" whileHover={{
-      scale: 1.02
-    }} transition={{
-      duration: 0.2
-    }}>
-        <Button className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-1000" onClick={handleEvaluate} disabled={isEvaluating || !response.trim()}>
-          {isEvaluating ? <>
+      <motion.div 
+        className="flex flex-col sm:flex-row justify-center gap-4 mt-8"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Button 
+          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+          onClick={handleEvaluate}
+          disabled={isEvaluating || !response.trim()}
+        >
+          {isEvaluating ? (
+            <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Consultando o especialista...
-            </> : 'Consultar o especialista'}
+            </>
+          ) : (
+            'Consultar o especialista'
+          )}
         </Button>
         
-        <Button onClick={handleSubmit} disabled={!isEvaluated || !response.trim() || score !== undefined && score < MINIMUM_SCORE || elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS} className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300 ">
+        <Button
+          onClick={handleSubmit}
+          disabled={
+            !isEvaluated || 
+            !response.trim() || 
+            (score !== undefined && score < MINIMUM_SCORE) || 
+            (elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS)
+          }
+          className="animate-float bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+        >
           Enviar proposta e continuar
         </Button>
       </motion.div>
-    </motion.div>;
+    </motion.div>
+  );
 };
+
 export default Mission;
