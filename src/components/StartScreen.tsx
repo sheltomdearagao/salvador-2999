@@ -18,7 +18,7 @@ const StartScreen: React.FC = () => {
     }
   };
   return <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
-      <h1 className="text-4xl mb-6 cyber-heading text-slate-900 font-extrabold md:text-6xl">
+      <h1 className="text-4xl mb-6 cyber-heading text-slate-900 font-extrabold md:text-8xl">
         Salvador 2999
       </h1>
       <h2 className="text-2xl mb-8 text-zinc-300 font-bold md:text-4xl">
