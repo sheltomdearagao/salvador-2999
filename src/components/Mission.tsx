@@ -193,7 +193,7 @@ const Mission: React.FC = () => {
             (score !== undefined && score < MINIMUM_SCORE) || 
             (elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS)
           }
-          className="animate-float bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+          className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
         >
           Enviar proposta e continuar
         </Button>
