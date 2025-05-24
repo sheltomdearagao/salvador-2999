@@ -61,11 +61,11 @@ serve(async (req) => {
             content: `Você é um avaliador especializado na Competência V da redação do ENEM, que avalia propostas de intervenção. 
             
             Uma proposta de intervenção COMPLETA deve apresentar 5 elementos: 
-            1. Ação (O quê?) - O que deve ser feito para solucionar ou mitigar o problema
-            2. Agente (Quem?) - Quem será o responsável por executar a ação proposta
-            3. Modo/Meio (Como?) - De que maneira ou através de qual recurso a ação será realizada
-            4. Efeito (Para quê?) - Finalidade ou resultado esperado da ação proposta
-            5. Detalhamento - Informação adicional sobre algum dos elementos anteriores
+            1. **Ação (O quê?)** - O que deve ser feito para solucionar ou mitigar o problema
+            2. **Agente (Quem?)** - Quem será o responsável por executar a ação proposta
+            3. **Modo/Meio (Como?)** - De que maneira ou através de qual recurso a ação será realizada
+            4. **Efeito (Para quê?)** - Finalidade ou resultado esperado da ação proposta
+            5. **Detalhamento** - Informação adicional sobre algum dos elementos anteriores
             
             Analise a resposta do jogador e identifique quantos desses elementos estão presentes corretamente. 
             Avalie a proposta de intervenção em uma escala de 0 a 10. 
@@ -73,22 +73,35 @@ serve(async (req) => {
             Uma proposta com 3 elementos deve receber nota entre 5 e 7.
             Uma proposta com 1 ou 2 elementos deve receber nota abaixo de 5.
             
-            Forneça feedback construtivo e sugestões de melhoria. Identifique explicitamente quais elementos estão presentes e quais estão ausentes.
+            IMPORTANTE: Formate sua resposta de forma clara e organizada, utilizando markdown para melhor legibilidade.
             
-            Estrutura da avaliação:
-            1. Análise dos elementos presentes (listar cada um encontrado)
-            2. Elementos ausentes ou que precisam de melhorias
-            3. Nota final (formato "Nota: X/10")
-            4. Quantidade de elementos válidos (formato "Elementos: Y/5")
+            ## Estrutura obrigatória da sua avaliação:
+
+            ### 📋 Análise dos Elementos
+            **Elementos encontrados:**
+            - Lista cada elemento identificado com explicação clara
+            
+            **Elementos ausentes:**
+            - Lista elementos que faltam ou precisam de melhorias
+            
+            ### 📊 Resultado da Avaliação
+            **Nota:** X/10
+            **Elementos válidos:** Y/5
+            
+            ### 💡 Sugestões de Melhoria
+            - Forneça dicas específicas e construtivas para aprimorar a proposta
+            
+            ### ✅ Exemplo de Proposta Completa
+            - Se a nota for baixa, ofereça um exemplo prático de como incluir os elementos faltantes
             `
           },
           {
             role: "user",
-            content: `Missão: ${missionPrompt}\n\nResposta do jogador: ${userResponse}\n\nAvalie esta proposta de intervenção conforme os critérios da Competência V.`
+            content: `**Missão:** ${missionPrompt}\n\n**Resposta do jogador:** ${userResponse}\n\nAvalie esta proposta de intervenção conforme os critérios da Competência V do ENEM.`
           }
         ],
-        temperature: 0.5,
-        max_tokens: 800,
+        temperature: 0.3,
+        max_tokens: 1000,
       }),
     });
 
@@ -111,12 +124,12 @@ serve(async (req) => {
     console.log("✅ Avaliação concluída com sucesso");
     const evaluation = data.choices[0].message.content;
     
-    // Extrair pontuação (formato "Nota: X/10")
-    const scoreMatch = evaluation.match(/Nota:?\s*(\d+(?:\.\d+)?)\/10/i);
+    // Extrair pontuação (procurar por diferentes formatos)
+    const scoreMatch = evaluation.match(/(?:Nota|Score):\s*(\d+(?:\.\d+)?)(?:\/10)?/i);
     const score = scoreMatch ? parseFloat(scoreMatch[1]) : undefined;
     
-    // Extrair contagem de elementos (formato "Elementos: Y/5")
-    const elementsMatch = evaluation.match(/Elementos:?\s*(\d+)\/5/i);
+    // Extrair contagem de elementos (procurar por diferentes formatos)
+    const elementsMatch = evaluation.match(/(?:Elementos válidos|Elementos):\s*(\d+)(?:\/5)?/i);
     const elementsCount = elementsMatch ? parseInt(elementsMatch[1]) : undefined;
 
     // Montando a resposta final

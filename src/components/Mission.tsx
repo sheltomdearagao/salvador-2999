@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
@@ -9,8 +10,10 @@ import MissionHeader from './mission/MissionHeader';
 import MissionContent from './mission/MissionContent';
 import MissionEvaluation from './mission/MissionEvaluation';
 import { motion } from "framer-motion";
+
 const MINIMUM_SCORE = 8;
 const MINIMUM_ELEMENTS = 4;
+
 const Mission: React.FC = () => {
   const {
     gameState,
@@ -18,19 +21,21 @@ const Mission: React.FC = () => {
     showHelpScreen,
     setCurrentScreen
   } = useGame();
+
   const {
     currentMission,
     missionResponses
   } = gameState;
+
   const [response, setResponse] = useState(currentMission ? missionResponses[currentMission.id] || '' : '');
   const [evaluation, setEvaluation] = useState<string | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [score, setScore] = useState<number | undefined>(undefined);
   const [elementsCount, setElementsCount] = useState<number | undefined>(undefined);
   const [isEvaluated, setIsEvaluated] = useState(false);
-  const {
-    toast
-  } = useToast();
+
+  const { toast } = useToast();
+
   if (!currentMission) {
     return <div className="flex justify-center items-center min-h-[60vh] text-center py-16">
         <motion.div initial={{
@@ -45,10 +50,11 @@ const Mission: React.FC = () => {
         </motion.div>
       </div>;
   }
-  ;
+
   const handleBack = () => {
     setCurrentScreen('missionMap');
   };
+
   const handleSubmit = () => {
     if (!isEvaluated) {
       toast({
@@ -58,6 +64,7 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
     if (score && score < MINIMUM_SCORE || elementsCount && elementsCount < MINIMUM_ELEMENTS) {
       toast({
         title: "Proposta insuficiente",
@@ -66,8 +73,10 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
     submitMissionResponse(currentMission.id, response, score);
   };
+
   const handleEvaluate = async () => {
     if (!response.trim()) {
       toast({
@@ -77,18 +86,22 @@ const Mission: React.FC = () => {
       });
       return;
     }
+
     setIsEvaluating(true);
     setEvaluation(null);
     setScore(undefined);
     setElementsCount(undefined);
     setIsEvaluated(false);
+
     try {
       const result = await evaluateMissionResponse(`${currentMission.description}\n\n${currentMission.instruction}`, response);
+
       if (result.success) {
         setEvaluation(result.evaluation || "");
         setScore(result.score);
         setElementsCount(result.elementsCount);
         setIsEvaluated(true);
+
         if (result.score && result.score < MINIMUM_SCORE || result.elementsCount && result.elementsCount < MINIMUM_ELEMENTS) {
           toast({
             title: "Proposta precisa de melhorias",
@@ -114,6 +127,7 @@ const Mission: React.FC = () => {
       setIsEvaluating(false);
     }
   };
+
   return <motion.div initial={{
     opacity: 0
   }} animate={{
@@ -157,10 +171,11 @@ const Mission: React.FC = () => {
             </> : 'Consultar o especialista'}
         </Button>
         
-        <Button className="btn-cyber shadow-lg transition-all duration-300" onClick={handleSubmit} disabled={!isEvaluated || !response.trim() || score !== undefined && score < MINIMUM_SCORE || elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS}>
+        <Button className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300 animate-float" onClick={handleSubmit} disabled={!isEvaluated || !response.trim() || score !== undefined && score < MINIMUM_SCORE || elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS}>
           Enviar proposta e continuar
         </Button>
       </motion.div>
     </motion.div>;
 };
+
 export default Mission;
