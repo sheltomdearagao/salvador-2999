@@ -58,9 +58,9 @@ const CharacterSelectionSection: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {characters.map(character => <div key={character.id} className={`character-card ${gameState.selectedCharacter?.id === character.id ? 'character-card-active' : 'character-card-inactive'}`} onClick={() => selectCharacter(character)}>
             <div className="relative h-72 overflow-hidden bg-gray-100">
-              <img src={character.imagePath} alt={character.name} className="w-full h-full object-contain object-center" />
+              <img src={character.imagePath} alt={character.name} className="w-full h-full object-center object-scale-down" />
             </div>
-            <div className="p-4 bg-white">
+            <div className="p-4 bg-white px-[16px] py-[46px]">
               <h4 className="font-bold text-lg text-slate-800">{character.name}</h4>
               <p className="text-sm text-slate-600">{character.description}</p>
             </div>
