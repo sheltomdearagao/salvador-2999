@@ -164,7 +164,7 @@ const Mission: React.FC = () => {
     }} transition={{
       duration: 0.2
     }}>
-        <Button className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300" onClick={handleEvaluate} disabled={isEvaluating || !response.trim()}>
+        <Button className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-1000" onClick={handleEvaluate} disabled={isEvaluating || !response.trim()}>
           {isEvaluating ? <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Consultando o especialista...
