@@ -154,20 +154,7 @@
     transform: scale(1.02);
   }
 
-  .cyber-heading {
-    @apply font-orbitron font-bold text-transparent bg-clip-text;
-    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 25%, #c7d2fe 50%, #a5b4fc 75%, #8b5cf6 100%);
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease-in-out infinite, title-expand 1.5s ease-out;
-    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
-  }
-
-  .cyber-heading-dark {
-    @apply font-orbitron font-bold text-transparent bg-clip-text;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #64748b 75%, #94a3b8 100%);
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease-in-out infinite;
-  }
+  
 
   .character-portrait img {
     @apply object-contain object-center w-full h-full;
