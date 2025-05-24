@@ -139,11 +139,19 @@
   }
   
   .mission-available {
-    @apply border-cyber-blue cursor-pointer hover:scale-102 hover:border-cyber-purple;
+    @apply border-cyber-blue cursor-pointer hover:border-cyber-purple;
+  }
+  
+  .mission-available:hover {
+    transform: scale(1.02);
   }
   
   .mission-completed {
-    @apply border-cyber-purple hover:scale-102 cursor-pointer;
+    @apply border-cyber-purple cursor-pointer;
+  }
+  
+  .mission-completed:hover {
+    transform: scale(1.02);
   }
   
   .cyber-heading {
@@ -208,9 +216,5 @@
 
   .animate-pulse-glow {
     animation: pulse-glow 3s ease-in-out infinite;
-  }
-
-  .hover\:scale-102:hover {
-    transform: scale(1.02);
   }
 }
