@@ -73,12 +73,11 @@ const CharacterSelectionSection: React.FC = () => {
             className={`character-card ${gameState.selectedCharacter?.id === character.id ? 'character-card-active' : 'character-card-inactive'}`} 
             onClick={() => selectCharacter(character)}
           >
-            <div className="relative h-72 overflow-hidden">
+            <div className="relative h-72 overflow-hidden bg-gray-100">
               <img 
                 src={character.imagePath} 
                 alt={character.name} 
-                className="w-full h-full object-cover object-center" 
-                style={{ objectFit: 'cover' }}
+                className="w-full h-full object-contain object-center" 
               />
             </div>
             <div className="p-4 bg-white">

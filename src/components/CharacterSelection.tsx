@@ -52,12 +52,11 @@ const CharacterSelection: React.FC = () => {
             variants={characterVariants}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <div className="relative h-72 overflow-hidden">
+            <div className="relative h-72 overflow-hidden bg-gray-100">
               <img
                 src={character.imagePath}
                 alt={character.name}
-                className="w-full h-full object-cover object-center transition-transform duration-300"
-                style={{ objectFit: 'cover' }}
+                className="w-full h-full object-contain object-center transition-transform duration-300"
               />
               {gameState.selectedCharacter?.id === character.id && (
                 <div className="absolute inset-0 bg-cyber-purple/20 flex items-center justify-center">
