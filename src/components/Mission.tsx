@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import MissionHeader from './mission/MissionHeader';
 import MissionContent from './mission/MissionContent';
 import MissionEvaluation from './mission/MissionEvaluation';
 import { motion } from "framer-motion";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const MINIMUM_SCORE = 160; // 8 elementos na escala de 200
 const MINIMUM_ELEMENTS = 4;
@@ -30,13 +30,14 @@ const Mission: React.FC = () => {
   const [elementsCount, setElementsCount] = useState<number | undefined>(undefined);
   const [isEvaluated, setIsEvaluated] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   if (!currentMission) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh] text-center py-16">
+      <div className="flex justify-center items-center min-h-[60vh] text-center py-8 px-4">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-          <Loader2 className="animate-spin h-12 w-12 mx-auto mb-4 text-cyber-purple" />
-          <p className="text-lg text-cyber-purple">Carregando missão...</p>
+          <Loader2 className="animate-spin h-8 w-8 md:h-12 md:w-12 mx-auto mb-4 text-cyber-purple" />
+          <p className="text-base md:text-lg text-cyber-purple">Carregando missão...</p>
         </motion.div>
       </div>
     );
@@ -127,7 +128,7 @@ const Mission: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="py-4 md:py-8 px-3 md:px-0 max-w-4xl mx-auto"
+      className="py-2 md:py-8 px-2 md:px-4 max-w-4xl mx-auto"
     >
       <MissionHeader 
         mission={currentMission} 
@@ -137,15 +138,15 @@ const Mission: React.FC = () => {
 
       <MissionContent mission={currentMission} />
 
-      <div className="mb-6">
-        <h3 className="font-bold mb-3 text-zinc-100 text-2xl">Sua Proposta de Intervenção:</h3>
+      <div className="mb-4 md:mb-6">
+        <h3 className="font-bold mb-2 md:mb-3 text-zinc-100 text-lg md:text-2xl">Sua Proposta de Intervenção:</h3>
         <Textarea
           value={response}
           onChange={(e) => setResponse(e.target.value)}
           placeholder="Digite sua proposta aqui... Lembre-se de incluir: agente, ação, modo, finalidade e detalhamento."
-          className="min-h-[200px] p-4 bg-white border-2 border-gray-200 text-slate-800 text-base focus:border-cyber-blue"
+          className={`${isMobile ? 'min-h-[150px]' : 'min-h-[200px]'} p-3 md:p-4 bg-white border-2 border-gray-200 text-slate-800 text-sm md:text-base focus:border-cyber-blue`}
         />
-        <div className="text-right text-sm mt-2 text-slate-600">
+        <div className="text-right text-xs md:text-sm mt-1 md:mt-2 text-slate-600">
           {response.length}/1000 caracteres
         </div>
       </div>
@@ -160,28 +161,28 @@ const Mission: React.FC = () => {
             evaluation={evaluation}
             elementsCount={elementsCount}
             score={score}
-            minimumScore={8} // 8 na escala de 10
+            minimumScore={8}
           />
         </motion.div>
       )}
 
       <motion.div 
-        className="flex flex-col sm:flex-row justify-center gap-4 mt-8"
-        whileHover={{ scale: 1.02 }}
+        className="flex flex-col gap-3 md:gap-4 mt-6 md:mt-8"
+        whileHover={{ scale: isMobile ? 1 : 1.02 }}
         transition={{ duration: 0.2 }}
       >
         <Button 
-          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+          className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-sm md:text-base w-full"
           onClick={handleEvaluate}
           disabled={isEvaluating || !response.trim()}
         >
           {isEvaluating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Consultando o especialista...
+              {isMobile ? 'Consultando...' : 'Consultando o especialista...'}
             </>
           ) : (
-            'Consultar o especialista'
+            isMobile ? 'Consultar especialista' : 'Consultar o especialista'
           )}
         </Button>
         
@@ -193,9 +194,9 @@ const Mission: React.FC = () => {
             (score !== undefined && score < MINIMUM_SCORE) || 
             (elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS)
           }
-          className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+          className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 animate-float text-sm md:text-base w-full"
         >
-          Enviar proposta e continuar
+          {isMobile ? 'Enviar e continuar' : 'Enviar proposta e continuar'}
         </Button>
       </motion.div>
     </motion.div>
