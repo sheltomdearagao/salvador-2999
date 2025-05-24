@@ -156,11 +156,7 @@
   
   
 
-  .cyber-heading-dark {
-    @apply font-orbitron font-bold text-transparent bg-clip-text;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #64748b 75%, #94a3b8 100%);
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease-in-out infinite;
+;
   }
 
   .character-portrait img {
