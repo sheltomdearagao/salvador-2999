@@ -1,17 +1,17 @@
-
 import React from 'react';
 import { Mission } from '@/types/game';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, LockIcon, Clipboard } from 'lucide-react';
-
 interface MissionCardProps {
   mission: Mission;
   onClick: () => void;
 }
-
-const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick }) => {
+const MissionCard: React.FC<MissionCardProps> = ({
+  mission,
+  onClick
+}) => {
   const getMissionStatusInfo = () => {
-    switch(mission.status) {
+    switch (mission.status) {
       case 'locked':
         return {
           icon: <LockIcon className="h-5 w-5 mr-1" />,
@@ -32,21 +32,9 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick }) => {
         };
     }
   };
-  
   const statusInfo = getMissionStatusInfo();
-
-  return (
-    <div
-      className={`mission-card rounded-lg overflow-hidden ${
-        mission.status === 'locked'
-          ? 'mission-locked'
-          : mission.status === 'completed'
-          ? 'mission-completed border-2 border-cyber-purple/40'
-          : 'mission-available hover:shadow-xl transition-all duration-300'
-      }`}
-      onClick={mission.status !== 'locked' ? onClick : undefined}
-    >
-      <div className="bg-white p-5 h-full flex flex-col min-h-[280px]">
+  return <div className={`mission-card rounded-lg overflow-hidden ${mission.status === 'locked' ? 'mission-locked' : mission.status === 'completed' ? 'mission-completed border-2 border-cyber-purple/40' : 'mission-available hover:shadow-xl transition-all duration-300'}`} onClick={mission.status !== 'locked' ? onClick : undefined}>
+      <div className="bg-white p-5 h-full flex flex-col min-h-[280px] py-[10px]">
         <div className="mb-3 inline-block px-3 py-1.5 rounded-full bg-cyber-blue/20 text-cyber-blue text-sm font-semibold w-fit">
           {mission.zone}
         </div>
@@ -61,19 +49,11 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick }) => {
             </span>
           </div>
           
-          {mission.status !== 'locked' && (
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className={`${mission.status === 'completed' ? 'text-cyber-purple hover:text-cyber-purple/80' : 'text-cyber-blue hover:text-cyber-blue/80'} transition-colors font-medium`}
-            >
+          {mission.status !== 'locked' && <Button variant="ghost" size="sm" className={`${mission.status === 'completed' ? 'text-cyber-purple hover:text-cyber-purple/80' : 'text-cyber-blue hover:text-cyber-blue/80'} transition-colors font-medium`}>
               {mission.status === 'completed' ? 'Ver detalhes' : 'Iniciar'}
-            </Button>
-          )}
+            </Button>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MissionCard;
