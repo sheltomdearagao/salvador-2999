@@ -68,10 +68,14 @@ serve(async (req) => {
             5. **Detalhamento** - Informação adicional sobre algum dos elementos anteriores
             
             Analise a resposta do jogador e identifique quantos desses elementos estão presentes corretamente. 
-            Avalie a proposta de intervenção em uma escala de 0 a 10. 
-            Uma proposta com 4 ou 5 elementos deve receber nota mínima 8. 
-            Uma proposta com 3 elementos deve receber nota entre 5 e 7.
-            Uma proposta com 1 ou 2 elementos deve receber nota abaixo de 5.
+            Avalie a proposta de intervenção em uma escala de 0 a 200. 
+            Uma proposta com 5 elementos deve receber nota 200. 
+            Uma proposta com 4 elementos deve receber nota 160.
+            Uma proposta com 3 elementos deve receber nota 120.
+            Uma proposta com 2 elementos deve receber nota 80.
+            Uma proposta com 1 elementos deve receber nota 40.
+            Uma proposta apenas com elementos inválidos ou sem nenhum elemento deve receber nota 0
+            Propostas qeu desrespeitem os direitos humanos devem receber zero e deve ser explicado o motivo da nota 0 por DDH (Desrespeito aos Direitos Humanos)
             
             IMPORTANTE: Formate sua resposta de forma clara e organizada, utilizando markdown para melhor legibilidade.
             
@@ -85,7 +89,7 @@ serve(async (req) => {
             - Lista elementos que faltam ou precisam de melhorias
             
             ### 📊 Resultado da Avaliação
-            **Nota:** X/10
+            **Nota:** X/200
             **Elementos válidos:** Y/5
             
             ### 💡 Sugestões de Melhoria
@@ -93,14 +97,22 @@ serve(async (req) => {
             
             ### ✅ Exemplo de Proposta Completa
             - Se a nota for baixa, ofereça um exemplo prático de como incluir os elementos faltantes
-            `
+
+            Considere como agente válido todos os agentes indicados para executar uma determinada ação.Exemplos: "governo federal", "governos estaduais", "governos municipais", "Ministério da Educação", "Ministério da Saúde", "escolas", "professores", "família", "ONGs", "sociedade civil", "mídia", "influenciadores digitais", "instituições de ensino superior", "empresas privadas", "organizações internacionais", "plataformas digitais", "universidades", "comunidade escolar", "secretarias de educação", "profissionais da saúde" Não são válidos agentes extremamante vagos, como "alguém" e "ninguém".
+            Considere como ação válida todas as ações, normalmente representadas por verbos e locuções verbais, que expressem alguma medida a ser executada pelo agente. Exemplos de ações válidas: "criação de campanhas de conscientização", "inclusão de temas nas diretrizes curriculares escolares", "oferta de cursos de capacitação", "fiscalização mais rigorosa por parte do Estado", "investimento em infraestrutura", "ampliação do acesso a serviços públicos", "parcerias entre setor público e privado", "uso das redes sociais para difusão de informação", "promoção de debates em ambientes educacionais", "criação de centros de acolhimento e apoio", "oferta de atendimento psicológico gratuito", "implementação de políticas públicas específicas", "criação de aplicativos educativos", "oferta de bolsas de estudo", "apoio a ONGs e projetos sociais". Ações inválidas são do tipo: "fazer alguma coisa", "resolver esse problema", "tomar alguma atitude". 
+            Considere como modo/meio as expressões que indicam a forma de realizar a ação indicada. Normalmente esse elemento é introduzido por expressões como "através de", "por meio de", "mediante", "por intermédio de". Exemplos de modo/meio válidos: "por meio de campanhas publicitárias", "por intermédio de projetos educacionais", "por meio da criação de leis específicas", "por meio da implementação de políticas públicas", "através da oferta de oficinas e palestras", "com a utilização das redes sociais", "por meio da distribuição de materiais informativos", "através de parcerias com instituições especializadas", "por meio da capacitação de profissionais", "com o uso de plataformas digitais", "por meio da veiculação de conteúdos educativos", "através de ações comunitárias", "por meio de editais de incentivo", "com a criação de centros de atendimento", "por meio da reformulação curricular".
+            Considere como finalidade elementos que indiquem os efeitos ou objetivos da ação. Normalmente esse elemento é introduzido por expressões como "a fim de", "para", "com a finalidade de", "com o objetivo de", "o objetivo é", "a finalidade é". Exemplos: "com o objetivo de promover a conscientização da população", "a fim de reduzir os índices de desigualdade social", "com o intuito de garantir o acesso à informação", "para assegurar a inclusão de grupos marginalizados", "a fim de combater a desinformação", "com o objetivo de estimular o pensamento crítico", "para fortalecer o papel da educação na sociedade", "com o intuito de prevenir comportamentos discriminatórios", "a fim de ampliar o acesso a serviços essenciais", "para garantir o pleno exercício da cidadania", "com o objetivo de reduzir os impactos sociais do problema", "a fim de fomentar o respeito à diversidade", "com o intuito de promover uma cultura de paz", "para assegurar a equidade de oportunidades", "a fim de formar uma sociedade mais justa e empática"
+            Considere como detalhamento ideias que adicionam informações suplementares sobre algum dos outros elementos, como explicações, comparações, exemplificações, especificações, alguns apostos, mas não orações adjetivas. O detalhamento da finalidade é um elemento que se relaciona com o elemento finalidade através de conectivos e indicam a consequência ou o efeito da realização do elemento finalidade. Esse detalhamento da finalidade é conhecido como "efeito do efeito".
+
+
+            
           },
           {
             role: "user",
             content: `**Missão:** ${missionPrompt}\n\n**Resposta do jogador:** ${userResponse}\n\nAvalie esta proposta de intervenção conforme os critérios da Competência V do ENEM.`
           }
         ],
-        temperature: 0.3,
+        temperature: 0.2,
         max_tokens: 1000,
       }),
     });
