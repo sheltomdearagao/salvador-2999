@@ -171,7 +171,7 @@ const Mission: React.FC = () => {
             </> : 'Consultar o especialista'}
         </Button>
         
-        <Button className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300 animate-float" onClick={handleSubmit} disabled={!isEvaluated || !response.trim() || score !== undefined && score < MINIMUM_SCORE || elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS}>
+        <Button className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-all duration-300 animate-pulse" onClick={handleSubmit} disabled={!isEvaluated || !response.trim() || score !== undefined && score < MINIMUM_SCORE || elementsCount !== undefined && elementsCount < MINIMUM_ELEMENTS}>
           Enviar proposta e continuar
         </Button>
       </motion.div>
