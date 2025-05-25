@@ -9,34 +9,28 @@ import Mission from './Mission';
 import HelpScreen from './HelpScreen';
 import EndScreen from './EndScreen';
 import Footer from './layout/Footer';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const GameContainer: React.FC = () => {
   const { gameState } = useGame();
   const { currentScreen } = gameState;
 
-  const renderCurrentScreen = () => {
-    switch (currentScreen) {
-      case 'start':
-        return <StartScreen />;
-      case 'characterSelection':
-        return <CharacterSelection />;
-      case 'adventureStart':
-        return <AdventureStartScreen />;
-      case 'missionMap':
-        return <MissionMap />;
-      case 'mission':
-        return <Mission />;
-      case 'help':
-        return <HelpScreen />;
-      case 'end':
-        return <EndScreen />;
-      default:
-        return <StartScreen />;
-    }
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5
+  };
+
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    enter: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
   };
 
   return (
-    <div className="game-container relative z-10">
+    <div className="game-container">
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px] pointer-events-none"></div>
+      
       <div className="relative z-10 min-h-[85vh]">
         <div className="absolute top-2 right-3 z-20">
           <span className="bg-emerald-600/90 text-white text-xs px-3 py-1.5 rounded-full font-medium shadow-lg">
@@ -44,9 +38,25 @@ const GameContainer: React.FC = () => {
           </span>
         </div>
 
-        <div className="w-full">
-          {renderCurrentScreen()}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentScreen}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+            variants={pageVariants}
+            transition={pageTransition}
+            className="w-full"
+          >
+            {currentScreen === 'start' && <StartScreen />}
+            {currentScreen === 'characterSelection' && <CharacterSelection />}
+            {currentScreen === 'adventureStart' && <AdventureStartScreen />}
+            {currentScreen === 'missionMap' && <MissionMap />}
+            {currentScreen === 'mission' && <Mission />}
+            {currentScreen === 'help' && <HelpScreen />}
+            {currentScreen === 'end' && <EndScreen />}
+          </motion.div>
+        </AnimatePresence>
       </div>
       
       <Footer />
