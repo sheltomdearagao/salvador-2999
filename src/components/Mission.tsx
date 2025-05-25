@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
 import MissionHeader from './mission/MissionHeader';
@@ -11,7 +12,7 @@ import MissionEvaluation from './mission/MissionEvaluation';
 import { motion } from "framer-motion";
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const MINIMUM_SCORE = 160; // 8 elementos na escala de 200
+const MINIMUM_SCORE = 160; // 4 elementos na escala de 200
 const MINIMUM_ELEMENTS = 4;
 
 const Mission: React.FC = () => {
@@ -161,7 +162,7 @@ const Mission: React.FC = () => {
             evaluation={evaluation}
             elementsCount={elementsCount}
             score={score}
-            minimumScore={8}
+            minimumScore={4}
           />
         </motion.div>
       )}

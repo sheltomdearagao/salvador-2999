@@ -4,6 +4,34 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
+// Rate limiting - máximo 10 avaliações por IP por hora
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10;
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hora em ms
+
+function getRealIP(req: Request): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+         req.headers.get("x-real-ip") || 
+         "unknown";
+}
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const userLimit = rateLimitMap.get(ip);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (userLimit.count >= RATE_LIMIT) {
+    return false;
+  }
+  
+  userLimit.count++;
+  return true;
+}
+
 serve(async (req) => {
   // Habilitando CORS
   if (req.method === "OPTIONS") {
@@ -11,6 +39,22 @@ serve(async (req) => {
   }
   
   try {
+    // Verificar rate limiting
+    const clientIP = getRealIP(req);
+    if (!checkRateLimit(clientIP)) {
+      console.log(`⚠️ Rate limit exceeded for IP: ${clientIP}`);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: "Muitas avaliações. Tente novamente em 1 hora." 
+        }),
+        { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 429 
+        }
+      );
+    }
+
     console.log("📝 Recebendo requisição para avaliação de missão");
     const { missionPrompt, userResponse } = await req.json();
     
@@ -29,28 +73,24 @@ serve(async (req) => {
       );
     }
 
-    // Tentar obter a chave API do header customizado ou do ambiente
-    const userApiKey = req.headers.get("X-User-API-Key");
-    const envApiKey = Deno.env.get("OPENAI_API_KEY");
-    const apiKey = userApiKey || envApiKey;
+    // Usar apenas a chave API do ambiente (configurada pelo desenvolvedor)
+    const apiKey = Deno.env.get("OPENAI_API_KEY");
 
-    // Verificar se alguma chave da API está disponível
     if (!apiKey) {
-      console.error("❌ Nenhuma chave da API OpenAI encontrada");
+      console.error("❌ Chave da API OpenAI não configurada no servidor");
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: "Chave da API OpenAI não encontrada. Configure sua chave API." 
+          error: "Serviço temporariamente indisponível. Tente novamente mais tarde." 
         }),
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 401 
+          status: 503 
         }
       );
     }
 
-    const keySource = userApiKey ? "usuário" : "ambiente";
-    console.log(`🔑 Usando chave da API OpenAI do ${keySource}`);
+    console.log(`🔑 Usando chave da API OpenAI do ambiente (IP: ${clientIP})`);
 
     // Enviar requisição para a API OpenAI
     const response = await fetch(OPENAI_API_URL, {
@@ -128,7 +168,7 @@ IMPORTANTE: Use exatamente este formato com os emojis e estrutura Markdown espec
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: data.error.message || "Erro ao processar a avaliação." 
+          error: "Erro ao processar a avaliação. Tente novamente." 
         }),
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -170,7 +210,7 @@ IMPORTANTE: Use exatamente este formato com os emojis e estrutura Markdown espec
   } catch (error) {
     console.error("❌ Erro na função de avaliação:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message || "Erro desconhecido." }),
+      JSON.stringify({ success: false, error: "Erro interno do servidor." }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500 
