@@ -60,7 +60,7 @@ const CharacterSelectionSection: React.FC = () => {
             <div className="relative h-72 overflow-hidden bg-gray-100">
               <img src={character.imagePath} alt={character.name} className="w-full h-full object-center object-scale-down" />
             </div>
-            <div className="p-4 bg-white px-[16px] py-[46px]">
+            <div className="p-4 bg-white px-[16px] py-[25px]">
               <h4 className="font-bold text-lg text-slate-800">{character.name}</h4>
               <p className="text-sm text-slate-600">{character.description}</p>
             </div>
