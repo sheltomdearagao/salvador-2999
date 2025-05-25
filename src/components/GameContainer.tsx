@@ -36,7 +36,7 @@ const GameContainer: React.FC = () => {
   };
 
   return (
-    <div className="game-container">
+    <div className="game-container relative z-10">
       <div className="relative z-10 min-h-[85vh]">
         <div className="absolute top-2 right-3 z-20">
           <span className="bg-emerald-600/90 text-white text-xs px-3 py-1.5 rounded-full font-medium shadow-lg">
