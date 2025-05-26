@@ -4,7 +4,6 @@ import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { HelpCircle, ArrowLeft } from 'lucide-react';
 import MissionCard from './mission/MissionCard';
-import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MissionMap: React.FC = () => {
@@ -27,12 +26,7 @@ const MissionMap: React.FC = () => {
   };
 
   return (
-    <motion.div 
-      className="py-2 md:py-8 px-2 md:px-6 lg:px-8 max-w-7xl mx-auto" 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      transition={{ duration: 0.3 }}
-    >
+    <div className="py-2 md:py-8 px-2 md:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col gap-4 md:gap-6 mb-4 md:mb-8">
         <div className="flex items-start gap-3 md:gap-4">
           <Button 
@@ -68,26 +62,16 @@ const MissionMap: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
         {missions.map((mission) => (
-          <motion.div
-            key={mission.id}
-            whileHover={{ scale: isMobile ? 1 : 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-          >
+          <div key={mission.id}>
             <MissionCard 
               mission={mission} 
               onClick={() => handleSelectMission(mission)} 
             />
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div 
-        className="mt-6 md:mt-8 text-center" 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
+      <div className="mt-6 md:mt-8 text-center">
         <div className="inline-block bg-white/95 p-4 md:p-6 rounded-lg border border-gray-200 shadow-lg max-w-full">
           <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
             <span className={`font-bold text-slate-800 ${isMobile ? 'text-lg' : 'text-xl'}`}>
@@ -99,11 +83,9 @@ const MissionMap: React.FC = () => {
           </div>
           
           <div className="w-full bg-gray-200 rounded-full h-2 md:h-3 mb-3 md:mb-4">
-            <motion.div 
-              className="bg-gradient-to-r from-cyber-blue to-cyber-purple h-2 md:h-3 rounded-full" 
-              initial={{ width: 0 }} 
-              animate={{ width: `${(gameState.completedMissions / 6) * 100}%` }} 
-              transition={{ duration: 1, delay: 0.7 }}
+            <div 
+              className="bg-gradient-to-r from-cyber-blue to-cyber-purple h-2 md:h-3 rounded-full transition-all duration-1000" 
+              style={{ width: `${(gameState.completedMissions / 6) * 100}%` }}
             />
           </div>
           
@@ -113,8 +95,8 @@ const MissionMap: React.FC = () => {
             </p>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

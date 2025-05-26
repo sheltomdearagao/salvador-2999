@@ -9,23 +9,10 @@ import Mission from './Mission';
 import HelpScreen from './HelpScreen';
 import EndScreen from './EndScreen';
 import Footer from './layout/Footer';
-import { AnimatePresence, motion } from 'framer-motion';
 
 const GameContainer: React.FC = () => {
   const { gameState } = useGame();
   const { currentScreen } = gameState;
-
-  const pageTransition = {
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.5
-  };
-
-  const pageVariants = {
-    initial: { opacity: 0, y: 20 },
-    enter: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
-  };
 
   return (
     <div className="game-container">
@@ -38,25 +25,15 @@ const GameContainer: React.FC = () => {
           </span>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScreen}
-            initial="initial"
-            animate="enter"
-            exit="exit"
-            variants={pageVariants}
-            transition={pageTransition}
-            className="w-full"
-          >
-            {currentScreen === 'start' && <StartScreen />}
-            {currentScreen === 'characterSelection' && <CharacterSelection />}
-            {currentScreen === 'adventureStart' && <AdventureStartScreen />}
-            {currentScreen === 'missionMap' && <MissionMap />}
-            {currentScreen === 'mission' && <Mission />}
-            {currentScreen === 'help' && <HelpScreen />}
-            {currentScreen === 'end' && <EndScreen />}
-          </motion.div>
-        </AnimatePresence>
+        <div className="w-full">
+          {currentScreen === 'start' && <StartScreen />}
+          {currentScreen === 'characterSelection' && <CharacterSelection />}
+          {currentScreen === 'adventureStart' && <AdventureStartScreen />}
+          {currentScreen === 'missionMap' && <MissionMap />}
+          {currentScreen === 'mission' && <Mission />}
+          {currentScreen === 'help' && <HelpScreen />}
+          {currentScreen === 'end' && <EndScreen />}
+        </div>
       </div>
       
       <Footer />

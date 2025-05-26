@@ -3,7 +3,6 @@ import React from 'react';
 import { Mission } from '@/types/game';
 import { Button } from '@/components/ui/button';
 import { HelpCircle, ArrowLeft } from 'lucide-react';
-import { motion } from "framer-motion";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MissionHeaderProps {
@@ -20,12 +19,7 @@ const MissionHeader: React.FC<MissionHeaderProps> = ({
   const isMobile = useIsMobile();
 
   return (
-    <motion.div 
-      className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-4 md:mb-8" 
-      initial={{ opacity: 0, y: -20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.5 }}
-    >
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-4 md:mb-8">
       <Button 
         variant="outline" 
         size={isMobile ? "sm" : "icon"} 
@@ -56,7 +50,7 @@ const MissionHeader: React.FC<MissionHeaderProps> = ({
           {isMobile && <span className="ml-1 text-xs">Ajuda</span>}
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
