@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { motion } from "framer-motion";
 import { useIsMobile } from '@/hooks/use-mobile';
-
 interface MissionActionsProps {
   onEvaluate: () => void;
   onSubmit: () => void;
@@ -16,7 +14,6 @@ interface MissionActionsProps {
   minimumScore: number;
   minimumElements: number;
 }
-
 const MissionActions: React.FC<MissionActionsProps> = ({
   onEvaluate,
   onSubmit,
@@ -29,43 +26,22 @@ const MissionActions: React.FC<MissionActionsProps> = ({
   minimumElements
 }) => {
   const isMobile = useIsMobile();
-
-  const isSubmitDisabled = 
-    !isEvaluated || 
-    !response.trim() || 
-    (score !== undefined && score < minimumScore) || 
-    (elementsCount !== undefined && elementsCount < minimumElements);
-
-  return (
-    <motion.div 
-      className="flex flex-col gap-3 md:gap-4 mt-6 md:mt-8"
-      whileHover={{ scale: isMobile ? 1 : 1.02 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Button 
-        className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-sm md:text-base w-full"
-        onClick={onEvaluate}
-        disabled={isEvaluating || !response.trim()}
-      >
-        {isEvaluating ? (
-          <>
+  const isSubmitDisabled = !isEvaluated || !response.trim() || score !== undefined && score < minimumScore || elementsCount !== undefined && elementsCount < minimumElements;
+  return <motion.div className="flex flex-col gap-3 md:gap-4 mt-6 md:mt-8" whileHover={{
+    scale: isMobile ? 1 : 1.02
+  }} transition={{
+    duration: 0.2
+  }}>
+      <Button className="bg-cyber-purple hover:bg-cyber-purple/80 text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-sm md:text-base w-full" onClick={onEvaluate} disabled={isEvaluating || !response.trim()}>
+        {isEvaluating ? <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             {isMobile ? 'Consultando...' : 'Consultando o especialista...'}
-          </>
-        ) : (
-          isMobile ? 'Consultar especialista' : 'Consultar o especialista'
-        )}
+          </> : isMobile ? 'Consultar especialista' : 'Consultar o especialista'}
       </Button>
       
-      <Button
-        onClick={onSubmit}
-        disabled={isSubmitDisabled}
-        className="bg-cyber-blue hover:bg-cyber-purple text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 animate-float text-sm md:text-base w-full"
-      >
+      <Button onClick={onSubmit} disabled={isSubmitDisabled} className="bg-cyber-blue hover: bg-cyber-purple text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-sm md:text-base w-full">
         {isMobile ? 'Enviar e continuar' : 'Enviar proposta e continuar'}
       </Button>
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default MissionActions;
