@@ -39,7 +39,7 @@ const MissionActions: React.FC<MissionActionsProps> = ({
           </> : isMobile ? 'Consultar especialista' : 'Consultar o especialista'}
       </Button>
       
-      <Button onClick={onSubmit} disabled={isSubmitDisabled} className="bg-cyber-blue hover: bg-cyber-purple text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-sm md:text-base w-full">
+      <Button onClick={onSubmit} disabled={isSubmitDisabled} className="bg-cyber-blue hover: bg-cyber-purple text-white font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg shadow-lg transition-all duration-300 text-blue text-sm md:text-base w-full bg-blue-700 hover:bg-blue-600">
         {isMobile ? 'Enviar e continuar' : 'Enviar proposta e continuar'}
       </Button>
     </motion.div>;
