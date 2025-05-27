@@ -27,14 +27,12 @@ const StartScreen: React.FC = () => {
       
       <div className="max-w-2xl mx-auto mb-12 card-cyber p-6">
         <p className="mb-6 text-slate-700 text-lg text-center<br> text-justify">Em 2999, Salvador é um cenário de ruínas e abandono, um lembrete sombrio de um futuro que falhou. O colapso não veio de uma catástrofe natural ou guerra, mas sim de uma decisão gradual e calculada das elites: a proibição do acesso igualitário à educação. Essa barreira imposta ao conhecimento criou um abismo intransponível entre as classes sociais.
-<br></br> 
-Na Zona Alta, outrora vibrante e próspera, a escassez de mão de obra qualificada se tornou um problema crônico. Sem o fluxo constante de talentos e habilidades que a educação universal poderia ter nutrido, a inovação estagnou e a infraestrutura começou a decair. 
 <br></br>
-
-Enquanto isso, na Zona Baixa, o cenário era de desolação. A ausência de oportunidades educacionais condenou gerações à marginalidade. O caos se instalou, impulsionado pela criminalidade desenfreada, miséria extrema e um sentimento de abandono que corroía qualquer resquício de esperança. As ruas se tornaram labirintos de sobrevivência, onde cada indivíduo lutava em um isolamento desesperador. 
-
+          <br></br>Na Zona Alta, outrora vibrante e próspera, a escassez de mão de obra qualificada se tornou um problema crônico. Sem o fluxo constante de talentos e habilidades que a educação universal poderia ter nutrido, a inovação estagnou e a infraestrutura começou a decair. 
 <br></br>
-A cidade, antes um símbolo de cultura e beleza, agora jazia dividida, um testemunho silencioso de como a privação do conhecimento pode desmantelar uma sociedade inteira, transformando a prosperidade em poeira e a esperança em desespero.</p>
+          <br></br>Enquanto isso, na Zona Baixa, o cenário era de desolação. A ausência de oportunidades educacionais condenou gerações à marginalidade. O caos se instalou, impulsionado pela criminalidade desenfreada, miséria extrema e um sentimento de abandono que corroía qualquer resquício de esperança. As ruas se tornaram labirintos de sobrevivência, onde cada indivíduo lutava em um isolamento desesperador. 
+<br></br>
+          <br></br>A cidade, antes um símbolo de cultura e beleza, agora jazia dividida, um testemunho silencioso de como a privação do conhecimento pode desmantelar uma sociedade inteira, transformando a prosperidade em poeira e a esperança em desespero.</p>
         
         <p className="mb-6 text-lg font-semibold text-cyber-purple">
           Uma antiga profecia anuncia:
