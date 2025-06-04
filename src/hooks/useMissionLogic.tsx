@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
@@ -23,26 +23,40 @@ export const useMissionLogic = () => {
     if (currentMission) {
       const savedResponse = missionResponses[currentMission.id] || '';
       setResponse(savedResponse);
+      // Reset evaluation state when mission changes
+      setEvaluation(null);
+      setScore(undefined);
+      setElementsCount(undefined);
+      setIsEvaluated(false);
     }
   }, [currentMission?.id, missionResponses]);
 
+  // Debounced save function usando useCallback para evitar re-renders
+  const debouncedSave = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (newResponse: string) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (currentMission && newResponse !== (missionResponses[currentMission.id] || '')) {
+            updateMissionResponse(currentMission.id, newResponse);
+          }
+        }, 500);
+      };
+    })(),
+    [currentMission?.id, missionResponses, updateMissionResponse]
+  );
+
   // Salvar resposta automaticamente quando o texto mudar
   useEffect(() => {
-    if (currentMission && response !== (missionResponses[currentMission.id] || '')) {
-      const timeoutId = setTimeout(() => {
-        updateMissionResponse(currentMission.id, response);
-      }, 500); // Debounce de 500ms
+    debouncedSave(response);
+  }, [response, debouncedSave]);
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [response, currentMission?.id, missionResponses, updateMissionResponse]);
-
-  const handleBack = () => {
-    // A resposta já está salva automaticamente, então podemos voltar sem perder dados
+  const handleBack = useCallback(() => {
     setCurrentScreen('missionMap');
-  };
+  }, [setCurrentScreen]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (!isEvaluated) {
       toast({
         title: "Avaliação necessária",
@@ -64,9 +78,9 @@ export const useMissionLogic = () => {
     if (currentMission) {
       submitMissionResponse(currentMission.id, response, score);
     }
-  };
+  }, [isEvaluated, score, elementsCount, currentMission, response, submitMissionResponse, toast]);
 
-  const handleEvaluate = async () => {
+  const handleEvaluate = useCallback(async () => {
     if (!response.trim()) {
       toast({
         title: "Resposta vazia",
@@ -120,7 +134,7 @@ export const useMissionLogic = () => {
     } finally {
       setIsEvaluating(false);
     }
-  };
+  }, [response, currentMission, toast]);
 
   return {
     response,

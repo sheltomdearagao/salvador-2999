@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { memo, useMemo } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { motion } from "framer-motion";
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,7 +11,7 @@ interface MissionEvaluationProps {
   minimumScore: number;
 }
 
-const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
+const MissionEvaluation: React.FC<MissionEvaluationProps> = memo(({
   evaluation,
   elementsCount,
   score,
@@ -18,9 +19,9 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  // Função para renderizar o texto da avaliação preservando a formatação
-  const renderEvaluation = (text: string) => {
-    return text
+  // Memoizar a renderização do texto da avaliação para evitar re-processamento
+  const renderedEvaluation = useMemo(() => {
+    return evaluation
       .split('\n')
       .map((line, index) => {
         // Títulos com ##
@@ -67,7 +68,33 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
         
         return <br key={index} />;
       });
-  };
+  }, [evaluation, isMobile]);
+
+  // Memoizar o cálculo de score insuficiente
+  const isScoreInsufficient = useMemo(() => {
+    return score !== undefined && score < (minimumScore * 20);
+  }, [score, minimumScore]);
+
+  // Memoizar os elementos de pontuação
+  const elementsDisplay = useMemo(() => {
+    if (elementsCount === undefined) return null;
+
+    return (
+      <div className="flex gap-2 justify-center md:justify-start flex-wrap">
+        {Array.from({ length: 5 }, (_, i) => (
+          <motion.div 
+            key={i}
+            className={`${isMobile ? 'w-8 h-8 text-sm' : 'w-10 h-10'} rounded-full flex items-center justify-center shadow-md font-bold
+              ${i < elementsCount ? 'bg-cyber-purple text-white' : 'bg-gray-200 text-gray-500'}`}
+            whileHover={{ scale: isMobile ? 1.05 : 1.1 }}
+            transition={{ duration: 0.2 }}
+          >
+            {i + 1}
+          </motion.div>
+        ))}
+      </div>
+    );
+  }, [elementsCount, isMobile]);
 
   return (
     <motion.div 
@@ -81,7 +108,7 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
       </h3>
       
       <div className="text-slate-800 leading-relaxed bg-slate-50 p-3 md:p-4 rounded-lg border">
-        {renderEvaluation(evaluation)}
+        {renderedEvaluation}
       </div>
       
       {elementsCount !== undefined && (
@@ -89,19 +116,7 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
           <span className={`font-bold text-slate-800 ${isMobile ? 'text-base' : 'text-lg'}`}>
             Elementos válidos:
           </span> 
-          <div className="flex gap-2 justify-center md:justify-start flex-wrap">
-            {[...Array(5)].map((_, i) => (
-              <motion.div 
-                key={i}
-                className={`${isMobile ? 'w-8 h-8 text-sm' : 'w-10 h-10'} rounded-full flex items-center justify-center shadow-md font-bold
-                  ${i < elementsCount ? 'bg-cyber-purple text-white' : 'bg-gray-200 text-gray-500'}`}
-                whileHover={{ scale: isMobile ? 1.05 : 1.1 }}
-                transition={{ duration: 0.2 }}
-              >
-                {i + 1}
-              </motion.div>
-            ))}
-          </div>
+          {elementsDisplay}
         </div>
       )}
       
@@ -113,7 +128,7 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
           <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-cyber-purple`}>
             {score}/200
           </span>
-          {score < (minimumScore * 20) && (
+          {isScoreInsufficient && (
             <div className="mt-3 md:mt-4 flex items-start md:items-center bg-amber-50 p-3 md:p-4 rounded-lg border border-amber-200">
               <AlertTriangle className={`mr-2 md:mr-3 ${isMobile ? 'h-5 w-5 mt-0.5' : 'h-6 w-6'} text-amber-500 shrink-0`} />
               <span className={`text-amber-700 font-medium ${isMobile ? 'text-sm' : 'text-base'}`}>
@@ -125,6 +140,8 @@ const MissionEvaluation: React.FC<MissionEvaluationProps> = ({
       )}
     </motion.div>
   );
-};
+});
+
+MissionEvaluation.displayName = 'MissionEvaluation';
 
 export default MissionEvaluation;
