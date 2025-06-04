@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { evaluateMissionResponse } from '@/utils/openaiService';
 import { useToast } from '@/hooks/use-toast';
@@ -8,7 +8,7 @@ const MINIMUM_SCORE = 160;
 const MINIMUM_ELEMENTS = 4;
 
 export const useMissionLogic = () => {
-  const { gameState, submitMissionResponse, setCurrentScreen } = useGame();
+  const { gameState, submitMissionResponse, setCurrentScreen, updateMissionResponse } = useGame();
   const { currentMission, missionResponses } = gameState;
   const [response, setResponse] = useState(currentMission ? missionResponses[currentMission.id] || '' : '');
   const [evaluation, setEvaluation] = useState<string | null>(null);
@@ -18,7 +18,27 @@ export const useMissionLogic = () => {
   const [isEvaluated, setIsEvaluated] = useState(false);
   const { toast } = useToast();
 
+  // Carregar resposta salva quando a missão mudar
+  useEffect(() => {
+    if (currentMission) {
+      const savedResponse = missionResponses[currentMission.id] || '';
+      setResponse(savedResponse);
+    }
+  }, [currentMission?.id, missionResponses]);
+
+  // Salvar resposta automaticamente quando o texto mudar
+  useEffect(() => {
+    if (currentMission && response !== (missionResponses[currentMission.id] || '')) {
+      const timeoutId = setTimeout(() => {
+        updateMissionResponse(currentMission.id, response);
+      }, 500); // Debounce de 500ms
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [response, currentMission?.id, missionResponses, updateMissionResponse]);
+
   const handleBack = () => {
+    // A resposta já está salva automaticamente, então podemos voltar sem perder dados
     setCurrentScreen('missionMap');
   };
 

@@ -69,6 +69,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  const updateMissionResponse = (missionId: string, response: string) => {
+    setGameState((prev) => ({
+      ...prev,
+      missionResponses: {
+        ...prev.missionResponses,
+        [missionId]: response
+      }
+    }));
+  };
+
   const submitMissionResponse = (missionId: string, response: string, score?: number) => {
     if (!response.trim()) {
       toast({
@@ -163,6 +173,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         startGame,
         selectMission,
         submitMissionResponse,
+        updateMissionResponse,
         showHelpScreen,
         hideHelpScreen,
         resetGame,

@@ -39,6 +39,7 @@ export type GameContextType = {
   startGame: () => void;
   selectMission: (mission: Mission) => void;
   submitMissionResponse: (missionId: string, response: string, score?: number) => void;
+  updateMissionResponse: (missionId: string, response: string) => void;
   showHelpScreen: () => void;
   hideHelpScreen: () => void;
   resetGame: () => void;
