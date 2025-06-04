@@ -1,3 +1,4 @@
+
 // supabase/functions/evaluate-mission/index.ts
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -189,28 +190,28 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
 2. **Avalie a proposta com base nos 5 elementos obrigatórios:**
 
    ✅ **AÇÃO** → O que deve ser feito?
-   - Válido: “criar campanhas”, “investir em projetos sociais”.
-   - Nulo: “é necessário agir”, “medidas devem ser tomadas”.
+   - Válido: "criar campanhas", "investir em projetos sociais".
+   - Nulo: "é necessário agir", "medidas devem ser tomadas".
 
    ✅ **AGENTE** → Quem executará a ação?
-   - Válido: “o governo federal”, “ONGs”, “a mídia”, “as escolas”.
-   - Nulo: “deve-se promover” (sem indicar o agente).
+   - Válido: "o governo federal", "ONGs", "a mídia", "as escolas".
+   - Nulo: "deve-se promover" (sem indicar o agente).
 
    ✅ **MEIO/MODO** → Como a ação será realizada? SEMPRE introduzido por expressões como "através de", "por meio de", "mediante", "por intermédio de", e equivalentes
-   - Válido: “por meio de aplicativos”, “com palestras em escolas públicas”.
-   - Nulo: “de forma eficaz”, “com responsabilidade”, "rapidamente".
+   - Válido: "por meio de aplicativos", "com palestras em escolas públicas".
+   - Nulo: "de forma eficaz", "com responsabilidade", "rapidamente".
 
    ✅ **FINALIDADE** → Para quê? Qual o objetivo da ação?
-   - Válido: “a fim de reduzir o preconceito”, “com o objetivo de informar os jovens”.
-   - Nulo: “para o bem de todos”, “visando melhorias” (vago ou decorativo).
+   - Válido: "a fim de reduzir o preconceito", "com o objetivo de informar os jovens".
+   - Nulo: "para o bem de todos", "visando melhorias" (vago ou decorativo).
 
    ✅ **DETALHAMENTO** → Informação específica, concreta e relevante que complementa outro elemento (agente, ação, meio ou finalidade). O detalhamento pode se apresentar como exemplificação [...]
-   - Válido: “campanhas elaboradas com influenciadores digitais para o público adolescente”.
+   - Válido: "campanhas elaboradas com influenciadores digitais para o público adolescente".
    - Nulo: repetição de outro elemento com outras palavras, ou algo genérico.
    - Válido: "(...), onde/em que o celular seja uma ferramenta de apoio, e não um empecilho à educação"
 
 3. **Atenção a estruturas condicionais!**
-   - Se a proposta estiver formulada como hipótese (ex: “caso medidas sejam tomadas...”), atribua diretamente **80 pontos**.
+   - Se a proposta estiver formulada como hipótese (ex: "caso medidas sejam tomadas..."), atribua diretamente **80 pontos**.
    - Ignore a contagem de elementos nesse caso.
 
 4. **Desconsidere elementos implícitos, subentendidos ou vagos.**
@@ -238,7 +239,7 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
 `;
 
   try {
-    // Chamada à OpenAI
+    // Chamada à OpenAI com parâmetros mais determinísticos
     const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -254,7 +255,8 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
             content: `**Missão:** ${missionPrompt}\n\n**Resposta do usuário:** ${userResponse}\n\nAvalie esta proposta de intervenção seguindo rigorosamente o formato especificado.`
           }
         ],
-        temperature: 0.91,
+        temperature: 0.1, // Reduzido de 0.91 para 0.1 para maior consistência
+        top_p: 1, // Adicionado para maior determinismo
         max_tokens: 2500,
       }),
     });
@@ -288,9 +290,9 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
     return new Response(
       JSON.stringify({
         success: true,
-        avaliacao,
-        pontuacao,
-        elementosValidos
+        evaluation: avaliacao,
+        score: pontuacao,
+        elementsCount: elementosValidos
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
