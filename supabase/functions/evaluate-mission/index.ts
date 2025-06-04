@@ -1,8 +1,12 @@
+// supabase/functions/evaluate-mission/index.ts
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import { logInfo, logWarn, logError } from "../_shared/log.ts";
 
-function validateRequestBody(body: any): { valid: boolean, error?: string } {
+// ===== UTILITÁRIOS =====
+
+export function validarCorpoRequisicao(body: any): { valid: boolean; error?: string } {
   if (!body || typeof body !== "object") {
     return { valid: false, error: "Corpo da requisição deve ser um objeto JSON." };
   }
@@ -13,7 +17,6 @@ function validateRequestBody(body: any): { valid: boolean, error?: string } {
   if (typeof userResponse !== "string" || !userResponse.trim()) {
     return { valid: false, error: "O 'userResponse' deve ser uma string não vazia." };
   }
-  // Limite do tamanho dos campos (ex: 2048 caracteres cada)
   if (missionPrompt.length > 2048) {
     return { valid: false, error: "O 'missionPrompt' deve ter no máximo 2048 caracteres." };
   }
@@ -23,152 +26,151 @@ function validateRequestBody(body: any): { valid: boolean, error?: string } {
   return { valid: true };
 }
 
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-
-// Rate limiting - máximo 10 avaliações por IP por hora
+// Rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 10;
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hora em ms
+const CLEANUP_INTERVAL = 60 * 60 * 1000; // Limpeza a cada 1h
 
-function getRealIP(req: Request): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
-         req.headers.get("x-real-ip") || 
-         "unknown";
+export function obterIPReal(req: Request): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
 }
 
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const userLimit = rateLimitMap.get(ip);
-  
-  if (!userLimit || now > userLimit.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+function checarRateLimit(ip: string): boolean {
+  const agora = Date.now();
+  const info = rateLimitMap.get(ip);
+
+  if (!info || agora > info.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: agora + RATE_LIMIT_WINDOW });
     return true;
   }
-  
-  if (userLimit.count >= RATE_LIMIT) {
+  if (info.count >= RATE_LIMIT) {
     return false;
   }
-  
-  userLimit.count++;
+  info.count++;
   return true;
 }
 
-serve(async (req) => {
-  // Habilitando CORS
-  if (req.method === "OPTIONS") {
-    // Limitar tamanho do body (ex: 4KB)
-const MAX_BODY_SIZE = 54096;
+// Limpeza periódica dos IPs expirados
+setInterval(() => {
+  const agora = Date.now();
+  for (const [ip, info] of rateLimitMap) {
+    if (agora > info.resetTime) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, CLEANUP_INTERVAL);
 
-let rawBody = new Uint8Array();
-try {
+// Função para ler body com limite
+export async function lerBodyJSON(req: Request, maxSize: number): Promise<any> {
   const reader = req.body?.getReader();
   if (!reader) throw new Error("Body reader não disponível.");
   let total = 0;
+  let chunks: Uint8Array[] = [];
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
     total += value.length;
-    if (total > MAX_BODY_SIZE) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Requisição muito grande. Tamanho máximo: 4KB." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 413 }
-      );
-    }
-    const tmp = new Uint8Array(rawBody.length + value.length);
-    tmp.set(rawBody);
-    tmp.set(value, rawBody.length);
-    rawBody = tmp;
+    if (total > maxSize) throw new Error("Requisição muito grande.");
+    chunks.push(value);
   }
-} catch {
-  return new Response(
-    JSON.stringify({ success: false, error: "Erro ao ler o corpo da requisição." }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-  );
+  const rawBody = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    rawBody.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return JSON.parse(new TextDecoder().decode(rawBody));
 }
-let bodyJson;
-try {
-  bodyJson = JSON.parse(new TextDecoder().decode(rawBody));
-} catch {
-  return new Response(
-    JSON.stringify({ success: false, error: "Body inválido. Envie um JSON válido." }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-  );
-} });
+
+// ===== HANDLER PRINCIPAL =====
+serve(async (req) => {
+  // CORS para todas as rotas
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
-  
+
+  // Limite de body
+  const MAX_BODY_SIZE = 53000; // ~53KB
+
+  let corpoJson: any;
   try {
-    // Verificar rate limiting
-    const clientIP = getRealIP(req);
-    if (!checkRateLimit(clientIP)) {
-      console.log(`⚠️ Rate limit exceeded for IP: ${clientIP}`);
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Muitas avaliações. Tente novamente em 1 hora." 
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 429 
-        }
-      );
-    }
+    corpoJson = await lerBodyJSON(req, MAX_BODY_SIZE);
+  } catch (err) {
+    logWarn("Erro ao ler o body", { error: err.message });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: err.message.includes("muito grande")
+          ? "Requisição muito grande. Tamanho máximo: 53KB."
+          : "Body inválido. Envie um JSON válido.",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: err.message.includes("muito grande") ? 413 : 400,
+      }
+    );
+  }
 
-    console.log("📝 Recebendo requisição para avaliação de missão");
-    const { missionPrompt, userResponse } = bodyJson;
-const validation = validateRequestBody(bodyJson);
-if (!validation.valid) {
-  return new Response(
-    JSON.stringify({ success: false, error: validation.error }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-  );
-}
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 400 
-        }
-      );
-    }
+  // Rate limiting
+  const ipCliente = obterIPReal(req);
+  if (!checarRateLimit(ipCliente)) {
+    logWarn("Rate limit atingido", { ip: ipCliente });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "Muitas avaliações. Tente novamente em 1 hora.",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 429,
+      }
+    );
+  }
 
-    // Usar apenas a chave API do ambiente (configurada pelo desenvolvedor)
-    const apiKey = Deno.env.get("OPENAI_API_KEY");
+  // Validação dos campos
+  const validacao = validarCorpoRequisicao(corpoJson);
+  if (!validacao.valid) {
+    logWarn("Corpo de requisição inválido", { erro: validacao.error });
+    return new Response(
+      JSON.stringify({ success: false, error: validacao.error }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      }
+    );
+  }
 
-    if (!apiKey) {
-      console.error("❌ Chave da API OpenAI não configurada no servidor");
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Serviço temporariamente indisponível. Tente novamente mais tarde." 
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 503 
-        }
-      );
-    }
+  const { missionPrompt, userResponse } = corpoJson;
+  logInfo("Requisição recebida para avaliação", { ip: ipCliente });
 
-    console.log(`🔑 Usando chave da API OpenAI do ambiente (IP: ${clientIP})`);
+  // Chave da OpenAI
+  const apiKey = Deno.env.get("OPENAI_API_KEY");
+  if (!apiKey) {
+    logError("Chave da API OpenAI não configurada no servidor");
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "Serviço temporariamente indisponível. Tente novamente mais tarde.",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 503,
+      }
+    );
+  }
 
-    // Enviar requisição para a API OpenAI
-    const response = await fetch(OPENAI_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `Você é um especialista em avaliação da Competência V da redação do ENEM.
+  // Prompt do sistema (use seu prompt completo aqui)
+  const promptSistema = `Você é um especialista em avaliação da Competência V da redação do ENEM.
 
 # ✅ PROMPT DEFINITIVO PARA AVALIAÇÃO DA COMPETÊNCIA 5 DO ENEM
 # 👇 Use este comando com modelos da OpenAI (GPT-4-turbo ou superior) para corrigir automaticamente propostas de intervenção.
 # 🚀 Otimizado para integração com ferramentas automáticas via API ou interface direta no Playground.
 # 🧠 Baseado em critérios oficiais do ENEM + diretrizes específicas do professor Sheltom.
 
-Sua tarefa é analisar a proposta de intervenção apresentada em uma redação do ENEM, avaliando a Competência 5 com base nos critérios abaixo. Siga o passo a passo com rigor. Use marcações com emojis e linguagem acessível para estudantes adolescentes.
+Sua tarefa é analisar a proposta de intervenção apresentada em uma redação do ENEM, avaliando a Competência 5 com base nos critérios abaixo. Siga o passo a passo com rigor. Use marcações com [...]
 
 ---
 
@@ -202,7 +204,7 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
    - Válido: “a fim de reduzir o preconceito”, “com o objetivo de informar os jovens”.
    - Nulo: “para o bem de todos”, “visando melhorias” (vago ou decorativo).
 
-   ✅ **DETALHAMENTO** → Informação específica, concreta e relevante que complementa outro elemento (agente, ação, meio ou finalidade). O detalhamento pode se apresentar como exemplificação ou comparação.
+   ✅ **DETALHAMENTO** → Informação específica, concreta e relevante que complementa outro elemento (agente, ação, meio ou finalidade). O detalhamento pode se apresentar como exemplificação [...]
    - Válido: “campanhas elaboradas com influenciadores digitais para o público adolescente”.
    - Nulo: repetição de outro elemento com outras palavras, ou algo genérico.
    - Válido: "(...), onde/em que o celular seja uma ferramenta de apoio, e não um empecilho à educação"
@@ -233,8 +235,20 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
 - ⚫ Nenhum elemento válido → **0 pontos**
 
 ---
+`;
 
-          },
+  try {
+    // Chamada à OpenAI
+    const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: promptSistema },
           {
             role: "user",
             content: `**Missão:** ${missionPrompt}\n\n**Resposta do usuário:** ${userResponse}\n\nAvalie esta proposta de intervenção seguindo rigorosamente o formato especificado.`
@@ -245,60 +259,47 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
       }),
     });
 
-    const data = await response.json();
-    
+    const data = await resposta.json();
+
     if (data.error) {
-      console.error("❌ Erro na API OpenAI:", data.error.message);
+      logError("Erro na API OpenAI", { mensagem: data.error.message });
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Erro ao processar a avaliação. Tente novamente." 
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500 
-        }
+        JSON.stringify({ success: false, error: "Erro ao processar a avaliação. Tente novamente." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
 
-    console.log("✅ Avaliação concluída com sucesso");
-    const evaluation = data.choices[0].message.content;
-    
-    // Extrair pontuação com regex mais robusta
-    const scoreMatch = evaluation.match(/\*\*Pontuação:\*\*\s*(\d+)\/200/i) || 
-                     evaluation.match(/Pontuação:\s*(\d+)\/200/i) ||
-                     evaluation.match(/(\d+)\/200/);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : undefined;
-    
-    // Extrair elementos válidos
-    const elementsMatch = evaluation.match(/\*\*Elementos válidos:\*\*\s*(\d+)\/5/i) ||
-                         evaluation.match(/Elementos válidos:\s*(\d+)\/5/i) ||
-                         evaluation.match(/(\d+)\/5/);
-    const elementsCount = elementsMatch ? parseInt(elementsMatch[1]) : undefined;
+    const avaliacao = data.choices[0].message.content;
 
-    console.log("📊 Pontuação extraída:", score);
-    console.log("📊 Elementos extraídos:", elementsCount);
+    // Regex para extração de score e elementos válidos
+    const pontuacaoMatch = avaliacao.match(/\*\*Pontuação:\*\*\s*(\d+)\/200/i)
+      || avaliacao.match(/Pontuação:\s*(\d+)\/200/i)
+      || avaliacao.match(/(\d+)\/200/);
+    const pontuacao = pontuacaoMatch ? parseInt(pontuacaoMatch[1]) : undefined;
 
-    // Montando a resposta final
-    const result = {
-      success: true,
-      evaluation,
-      score,
-      elementsCount
-    };
+    const elementosMatch = avaliacao.match(/\*\*Elementos válidos:\*\*\s*(\d+)\/5/i)
+      || avaliacao.match(/Elementos válidos:\s*(\d+)\/5/i)
+      || avaliacao.match(/(\d+)\/5/);
+    const elementosValidos = elementosMatch ? parseInt(elementosMatch[1]) : undefined;
 
+    logInfo("Avaliação concluída", { pontuacao, elementosValidos, ip: ipCliente });
+
+    // Resposta final
     return new Response(
-      JSON.stringify(result),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        success: true,
+        avaliacao,
+        pontuacao,
+        elementosValidos
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
+
   } catch (error) {
-    console.error("❌ Erro na função de avaliação:", error);
+    logError("Erro na função de avaliação", { error: error.message });
     return new Response(
       JSON.stringify({ success: false, error: "Erro interno do servidor." }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500 
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });
