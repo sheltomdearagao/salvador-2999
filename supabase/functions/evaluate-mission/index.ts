@@ -2,6 +2,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
+function validateRequestBody(body: any): { valid: boolean, error?: string } {
+  if (!body || typeof body !== "object") {
+    return { valid: false, error: "Corpo da requisição deve ser um objeto JSON." };
+  }
+  const { missionPrompt, userResponse } = body;
+  if (typeof missionPrompt !== "string" || !missionPrompt.trim()) {
+    return { valid: false, error: "O 'missionPrompt' deve ser uma string não vazia." };
+  }
+  if (typeof userResponse !== "string" || !userResponse.trim()) {
+    return { valid: false, error: "O 'userResponse' deve ser uma string não vazia." };
+  }
+  // Limite do tamanho dos campos (ex: 2048 caracteres cada)
+  if (missionPrompt.length > 2048) {
+    return { valid: false, error: "O 'missionPrompt' deve ter no máximo 2048 caracteres." };
+  }
+  if (userResponse.length > 2048) {
+    return { valid: false, error: "O 'userResponse' deve ter no máximo 2048 caracteres." };
+  }
+  return { valid: true };
+}
+
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
 // Rate limiting - máximo 10 avaliações por IP por hora
@@ -35,7 +56,44 @@ function checkRateLimit(ip: string): boolean {
 serve(async (req) => {
   // Habilitando CORS
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    // Limitar tamanho do body (ex: 4KB)
+const MAX_BODY_SIZE = 54096;
+
+let rawBody = new Uint8Array();
+try {
+  const reader = req.body?.getReader();
+  if (!reader) throw new Error("Body reader não disponível.");
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.length;
+    if (total > MAX_BODY_SIZE) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Requisição muito grande. Tamanho máximo: 4KB." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 413 }
+      );
+    }
+    const tmp = new Uint8Array(rawBody.length + value.length);
+    tmp.set(rawBody);
+    tmp.set(value, rawBody.length);
+    rawBody = tmp;
+  }
+} catch {
+  return new Response(
+    JSON.stringify({ success: false, error: "Erro ao ler o corpo da requisição." }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+  );
+}
+let bodyJson;
+try {
+  bodyJson = JSON.parse(new TextDecoder().decode(rawBody));
+} catch {
+  return new Response(
+    JSON.stringify({ success: false, error: "Body inválido. Envie um JSON válido." }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+  );
+} });
   }
   
   try {
@@ -56,15 +114,14 @@ serve(async (req) => {
     }
 
     console.log("📝 Recebendo requisição para avaliação de missão");
-    const { missionPrompt, userResponse } = await req.json();
-    
-    // Verificar se os dados necessários estão presentes
-    if (!missionPrompt || !userResponse) {
-      console.error("❌ Dados incompletos na requisição");
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Dados incompletos. Por favor, forneça o prompt da missão e a resposta do usuário." 
+    const { missionPrompt, userResponse } = bodyJson;
+const validation = validateRequestBody(bodyJson);
+if (!validation.valid) {
+  return new Response(
+    JSON.stringify({ success: false, error: validation.error }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+  );
+}
         }),
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
