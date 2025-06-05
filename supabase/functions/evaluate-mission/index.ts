@@ -204,11 +204,13 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
    ✅ **FINALIDADE** → Para quê? Qual o objetivo da ação?
    - Válido: "a fim de reduzir o preconceito", "com o objetivo de informar os jovens".
    - Nulo: "para o bem de todos", "visando melhorias" (vago ou decorativo).
+   - Considere válidos elementos vagos e superficiais, como "Para resolver esse problema", ou "A fim de acabar com [problema do tema]", desde que tenha uma relação lógica de objetivo ou efeito da ação
 
    ✅ **DETALHAMENTO** → Informação específica, concreta e relevante que complementa outro elemento (agente, ação, meio ou finalidade). O detalhamento pode se apresentar como exemplificação [...]
    - Válido: "campanhas elaboradas com influenciadores digitais para o público adolescente".
    - Nulo: repetição de outro elemento com outras palavras, ou algo genérico.
    - Válido: "(...), onde/em que o celular seja uma ferramenta de apoio, e não um empecilho à educação"
+   - Considere válidos elementos superficiais, como "Só assim, o Brasil será um país melhor", ou "Sendo assim, alcançaremos uma sociedade mais justa", desde que esteja relacionado de forma lógica com um dos outros elementos, indicando consequência, explicação, justificaiva, ou exemplo.
 
 3. **Atenção a estruturas condicionais!**
    - Se a proposta estiver formulada como hipótese (ex: "caso medidas sejam tomadas..."), atribua diretamente **80 pontos**.
