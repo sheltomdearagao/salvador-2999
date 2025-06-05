@@ -211,6 +211,7 @@ Corrigir a Competência 5 da redação do ENEM com base no número de elementos 
    - Nulo: repetição de outro elemento com outras palavras, ou algo genérico.
    - Válido: "(...), onde/em que o celular seja uma ferramenta de apoio, e não um empecilho à educação"
    - Considere válidos elementos superficiais, como "Só assim, o Brasil será um país melhor", ou "Sendo assim, alcançaremos uma sociedade mais justa", desde que esteja relacionado de forma lógica com um dos outros elementos, indicando consequência, explicação, justificaiva, ou exemplo.
+   - NÃO considere local e público-alvo
 
 3. **Atenção a estruturas condicionais!**
    - Se a proposta estiver formulada como hipótese (ex: "caso medidas sejam tomadas..."), atribua diretamente **80 pontos**.
